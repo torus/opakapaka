@@ -18,11 +18,11 @@
   (cgi-main
    (lambda (params)
      (let* ((port (current-input-port))
-	    (doc (ssax:xml->sxml (open-input-string (cgi-get-parameter "doc" params)) ())))
+            (doc (ssax:xml->sxml (open-input-string (cgi-get-parameter "doc" params)) ())))
        (let ((out (open-output-file "data" :if-exists :append)))
-	 (lock out)
-	 (newline out)			; First, write a newline
-	 (write (cadr doc) out) ; Then, add a item so that the file always end with ")"
-	 (unlock out)
-	 ))
+         (lock out)
+         (newline out)                  ; First, write a newline
+         (write (cadr doc) out) ; Then, add a item so that the file always end with ")"
+         (unlock out)
+         ))
      )))
