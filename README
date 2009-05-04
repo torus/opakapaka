@@ -1,1 +1,6 @@
 Implimenting a tiny Web-based chat system using Gauche.
+
+SETUP
+
+- chmod *.cgi to executable by HTTPd
+- chmod this directory to writable by HTTPd to create data file
