@@ -1,4 +1,4 @@
-#!/usr/bin/env gosh
+#!/Users/toru/local/bin/gosh
 ; -*- scheme -*-
 
 (use sxml.serializer)
@@ -18,7 +18,7 @@
   (let ((port (open-input-file "data")))
     (let wait-loop ()
       (let ((end (port-seek port 0 SEEK_END)))
-        (if (> #?=end #?=pos)
+        (if (> end pos)
             (let loop ((pos pos)
                        (part ()))
               (if (> end pos)
