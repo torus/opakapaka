@@ -45,7 +45,9 @@ function onload () {
                     pos = doc.getElementsByTagName ("pos")[0].firstChild.data;
                     out ("new pos = " + pos);
                     for (var e = doc.getElementsByTagName ("content")[0].firstChild; e; e = e.nextSibling) {
-                        out (e.tagName);
+                        var name = e.getElementsByTagName ("user-by-nickname")[0].firstChild.firstChild.data;
+                        var mesg = e.getElementsByTagName ("content")[0].firstChild.firstChild.data;
+                        out (name + ": " + mesg);
                     }
                     get_log ();
                 } else {
