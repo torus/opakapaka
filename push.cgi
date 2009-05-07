@@ -1,4 +1,4 @@
-#!/Users/toru/local/bin/gosh
+#!/usr/local/bin/gosh
 ; -*- scheme -*-
 
 (use gauche.fcntl)
@@ -18,7 +18,7 @@
 
 (define (main args)
   (let* ((port (current-input-port))
-         (doc #?=(ssax:xml->sxml port ())))
+         (doc (ssax:xml->sxml port ())))
     (let ((out (open-output-file "data" :if-exists :append)))
       (lock out)
       (newline out)                  ; First, write a newline

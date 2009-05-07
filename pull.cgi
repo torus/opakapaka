@@ -1,4 +1,4 @@
-#!/Users/toru/local/bin/gosh
+#!/usr/local/bin/gosh
 ; -*- scheme -*-
 
 (use sxml.serializer)
@@ -16,7 +16,7 @@
 
 (define (read-from-log pos)
   (let ((port (open-input-file "data")))
-    (let wait-loop ()
+    (let wait-loop ((count 0))
       (let ((end (port-seek port 0 SEEK_END)))
         (if (> end pos)
             (let loop ((pos pos)
@@ -27,6 +27,7 @@
                     (let ((exp (read port)))
                       (loop (port-tell port) (cons exp part))))
                   (values (reverse part) pos)))
-            (begin
-              (sys-sleep 1)
-              (wait-loop)))))))
+            (if (> count 30) (values () pos)
+              (begin
+                (sys-sleep 1)
+                (wait-loop (+ count 1)))))))))
