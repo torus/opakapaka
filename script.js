@@ -39,7 +39,17 @@ D.prototype.evaluate = function (elem) {
     }
 };
 
-function onload () {
+// http://james.padolsey.com/javascript/get-document-height-cross-browser/
+function getDocHeight() {
+    var D = document;
+    return Math.max(
+        Math.max(D.body.scrollHeight, D.documentElement.scrollHeight),
+        Math.max(D.body.offsetHeight, D.documentElement.offsetHeight),
+        Math.max(D.body.clientHeight, D.documentElement.clientHeight)
+    );
+}
+
+function initialize () {
     var d = document;
     var b = d.body;
     var ul = d.createElement ("ul");
@@ -68,7 +78,7 @@ function onload () {
             var text = inputtext.value;
             inputtext.value = "";
 
-            sendtext (d, inputtext, ul, text);
+            sendtext (d, inputtext, ul, nameinput.value, text);
 
             return false;
         }
@@ -90,11 +100,19 @@ function onload () {
                 if (this.status == 200) {
                     var doc = this.responseXML;
                     pos = doc.getElementsByTagName ("pos")[0].firstChild.data;
-                    out ("new pos = " + pos);
+
                     for (var e = doc.getElementsByTagName ("content")[0].firstChild; e; e = e.nextSibling) {
                         var x = new D (out);
                         x.evaluate (e);
                     }
+
+                    var scrollY = window.pageYOffset || document.body.scrollTop;
+                    var threshold = getDocHeight () - window.innerHeight * 1.5;
+                    out ("new pos = " + pos + " scrollY = " + scrollY + " threshold = " + threshold);
+                    if (scrollY > threshold) {
+                        window.scrollTo (0, getDocHeight () - window.innerHeight);
+                    }
+
                     get_log ();
                 } else {
                     out ("status = " + this.status);
@@ -106,15 +124,19 @@ function onload () {
     get_log ();
 }
 
-function sendtext (d, inputtext, ul, text) {
+function sendtext (d, inputtext, ul, name, text) {
     var chat_entry = make_dom_element ("chat-entry");
     var from = make_dom_element ("from");
     var user_by_nickname = make_dom_element ("user-by-nickname");
     var string = make_dom_element ("string");
     var content = make_dom_element ("content");
 
+    if (!(name && name.length > 0)) {
+        name = "Anonymous";
+    }
+
     var doc = document.implementation.createDocument ("", "", null);
-    var elem = (chat_entry (from (user_by_nickname (string ("unnamed"))),
+    var elem = (chat_entry (from (user_by_nickname (string (name))),
                             content (string (text)))) (doc);
 
     doc.appendChild (elem);
@@ -145,3 +167,6 @@ function make_dom_element (tag) {
         }
     }
 };
+
+// delay to prevent spin gear on Safari
+setTimeout (initialize, 1);
