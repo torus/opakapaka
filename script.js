@@ -5,6 +5,10 @@ D = function (output) {
     this.out = output;
 };
 D.prototype.chat_entry = function () {
+    // var img = make_dom_element ("img", "src");
+    // var p = make_dom_element ("p");
+
+    this.out (this.state.avatar_image);
     this.out (this.state.nickname + ": " + this.state.content);
 };
 D.prototype.from = function (user) {
@@ -18,6 +22,9 @@ D.prototype.string = function (elem) {
 };
 D.prototype.content = function (cont) {
     this.state.content = cont;
+};
+D.prototype.avatar_image = function (url) {
+    this.state.avatar_image = url;
 };
 
 D.prototype.evaluate = function (elem) {
@@ -61,17 +68,21 @@ function initialize () {
 
     var nameinput = d.createElement ("input");
     nameinput.setAttribute ("type", "text");
-    nameinput.setAttribute ("size", "30");
+    nameinput.setAttribute ("size", "20");
     f.appendChild (d.createTextNode ("Nickname: "));
     f.appendChild (nameinput);
+
+    var mailinput = d.createElement ("input");
+    mailinput.setAttribute ("type", "text");
+    mailinput.setAttribute ("size", "50");
+    f.appendChild (d.createTextNode (" Gravatar e-mail: "));
+    f.appendChild (mailinput);
     f.appendChild (d.createElement ("br"));
 
     var inputtext = d.createElement ("textarea");
     inputtext.setAttribute ("style", "width:80%; height:10ex;");
-
     f.appendChild (inputtext);
     f.onsubmit = function () {return false;}
-
 
     var stat = d.createElement ("div");
     var statcont = d.createElement ("p");
@@ -84,22 +95,23 @@ function initialize () {
         stattext.nodeValue = text;
     };
 
-    window.onkeypress = function (ev) {
-        if (ev.keyCode == 13) {
-            var text = inputtext.value;
-            inputtext.value = "";
-
-            sendtext (d, inputtext, ul, nameinput.value, text);
-
-            return false;
-        }
-    };
-
     var out = function (t) {
         var x = d.createElement ("li");
         x.appendChild (d.createTextNode (t));
         ul.appendChild (x);
     }
+
+    window.onkeypress = function (ev) {
+        if (ev.keyCode == 13) {
+            var text = inputtext.value;
+            inputtext.value = "";
+
+            // out (mailinput.value)
+            sendtext (d, inputtext, ul, nameinput.value, mailinput.value, text);
+
+            return false;
+        }
+    };
 
     var pos = 0;
     function get_log () {
@@ -126,7 +138,7 @@ function initialize () {
 
                     get_log ();
                 } else {
-                    out ("status = " + this.status);
+                    updatestat ("status = " + this.status);
                     setTimeout (get_log, 3000);
                 }
             }
@@ -135,10 +147,11 @@ function initialize () {
     get_log ();
 }
 
-function sendtext (d, inputtext, ul, name, text) {
+function sendtext (d, inputtext, ul, name, mail, text) {
     var chat_entry = make_dom_element ("chat-entry");
     var from = make_dom_element ("from");
     var user_by_nickname = make_dom_element ("user-by-nickname");
+    var avatar_img = make_dom_element ("avatar-image");
     var string = make_dom_element ("string");
     var content = make_dom_element ("content");
 
@@ -146,8 +159,15 @@ function sendtext (d, inputtext, ul, name, text) {
         name = "Anonymous";
     }
 
+    var avatar_elem = null;
+    if (mail && mail.length > 0) {
+        avatar_elem = avatar_img (string ("http://www.gravatar.com/avatar/"
+                                          + hex_md5 (mail.toLowerCase ()) + "?s=40"));
+    }
+
     var doc = document.implementation.createDocument ("", "", null);
-    var elem = (chat_entry (from (user_by_nickname (string (name))),
+    var elem = (chat_entry (from (user_by_nickname (string (name)),
+                                  avatar_elem),
                             content (string (text)))) (doc);
 
     doc.appendChild (elem);
@@ -159,7 +179,12 @@ function sendtext (d, inputtext, ul, name, text) {
 }
 
 function make_dom_element (tag) {
-    return function () {
+    var attrs = [];
+    for (var i = 1; i < arguments.length; i ++) {
+        attrs.push (arguments[i]);
+    }
+
+    var dest = function () {
         var args = arguments;
         var len = arguments.length;
 
@@ -167,6 +192,7 @@ function make_dom_element (tag) {
             var e = doc.createElement (tag);
             for (var i = 0; i < len; i ++) {
                 var c = args[i];
+                if (c == null) continue;
                 if (typeof (c) == "function") {
                     e.appendChild (args[i](doc));
                 } else {
@@ -177,6 +203,8 @@ function make_dom_element (tag) {
             return e;
         }
     }
+
+    return dest;
 };
 
 // delay to prevent spin gear on Safari
