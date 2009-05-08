@@ -8,7 +8,8 @@ D.prototype.chat_entry = function () {
     // var img = make_dom_element ("img", "src");
     // var p = make_dom_element ("p");
 
-    this.out (this.state.avatar_image);
+    if (this.state.avatar_image)
+        this.out (this.state.avatar_image);
     this.out (this.state.nickname + ": " + this.state.content);
 };
 D.prototype.from = function (user) {
