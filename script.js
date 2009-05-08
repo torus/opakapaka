@@ -70,8 +70,19 @@ function initialize () {
     inputtext.setAttribute ("style", "width:80%; height:10ex;");
 
     f.appendChild (inputtext);
-
     f.onsubmit = function () {return false;}
+
+
+    var stat = d.createElement ("div");
+    var statcont = d.createElement ("p");
+    var stattext = d.createTextNode ("initiazelid");
+    statcont.appendChild (stattext);
+    stat.appendChild (statcont);
+    b.appendChild (stat);
+
+    var updatestat = function (text) {
+        stattext.nodeValue = text;
+    };
 
     window.onkeypress = function (ev) {
         if (ev.keyCode == 13) {
@@ -108,7 +119,7 @@ function initialize () {
 
                     var scrollY = window.pageYOffset || document.body.scrollTop;
                     var threshold = getDocHeight () - window.innerHeight * 1.5;
-                    out ("new pos = " + pos + " scrollY = " + scrollY + " threshold = " + threshold);
+                    updatestat ("new pos = " + pos + " scrollY = " + scrollY + " threshold = " + threshold);
                     if (scrollY > threshold) {
                         window.scrollTo (0, getDocHeight () - window.innerHeight);
                     }
