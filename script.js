@@ -2,15 +2,24 @@
 
 D = function (output) {
     this.state = {};
+    this.outtext = function (t) {output (document.createTextNode (t))};
     this.out = output;
 };
 D.prototype.chat_entry = function () {
-    // var img = make_dom_element ("img", "src");
-    // var p = make_dom_element ("p");
+    var img = make_dom_element ("img", "src");
+    var p = make_dom_element ("p");
+    var div = make_dom_element ("div");
 
-    if (this.state.avatar_image)
-        this.out (this.state.avatar_image);
-    this.out (this.state.nickname + ": " + this.state.content);
+    // if (this.state.avatar_image)
+    //     this.outtext (this.state.avatar_image);
+    // this.outtext (this.state.nickname + ": " + this.state.content);
+
+    var imgsrc = this.state.avatar_image;
+
+    var e = (div (imgsrc ? img ({src: imgsrc, style: "float: left;"}) : null,
+                  div (this.state.nickname),
+                  p ({style: "margin: 0px"}, this.state.content))) (document);
+    this.out (e);
 };
 D.prototype.from = function (user) {
     this.state.nickname = user.nickname;
@@ -98,7 +107,9 @@ function initialize () {
 
     var out = function (t) {
         var x = d.createElement ("li");
-        x.appendChild (d.createTextNode (t));
+        x.style.clear = "both";
+        x.appendChild (t);
+        // x.appendChild (d.createTextNode (t));
         ul.appendChild (x);
     }
 
@@ -196,6 +207,10 @@ function make_dom_element (tag) {
                 if (c == null) continue;
                 if (typeof (c) == "function") {
                     e.appendChild (args[i](doc));
+                } else if (typeof (c) == "object") {
+                    for (var j in c) {
+                        e.setAttribute (j, c[j]);
+                    }
                 } else {
                     var t = doc.createTextNode (c);
                     e.appendChild (t);
@@ -207,6 +222,21 @@ function make_dom_element (tag) {
 
     return dest;
 };
+
+function test_function () {
+    var img = make_dom_element ("img");
+    var p = make_dom_element ("p");
+    var div = make_dom_element ("div");
+
+    var e = (div ({"class": "hoge", id: "fuga"},
+                  img ({src: "http://hoge/fuga.jpg"}),
+                  p ("anananan"))) (document);
+    alert (e);
+
+    document.body.appendChild (e);
+}
+
+// test_function ()
 
 // delay to prevent spin gear on Safari
 setTimeout (initialize, 1);
