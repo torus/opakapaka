@@ -75,7 +75,7 @@ function initialize () {
     var d = document;
     var b = d.body;
 
-    var tags = ["ul", "li", "form", "input", "textarea", "div", "p", "br"];
+    var tags = ["ul", "li", "form", "input", "textarea", "div", "p", "br", "a"];
     var env = {};
     for (var i in tags) {
         var t = tags[i];
@@ -105,7 +105,10 @@ function initialize () {
         inputtext = textarea ({style: "width:80%; height:10ex;"}) (d);
         form_elem = (form ("Nickname: ", ewrap (nameinput),
                            " Gravatar e-mail: ", ewrap (mailinput),
-                           br (), ewrap (inputtext)
+                           a ({href: "http://gravatar.com"}, "What's this?"),
+                           br (), ewrap (inputtext),
+                           p ("[TIPS] Press Shift+Enter to add a new line.  ",
+                              a ({href: "http://gravatar.com"}, "Get a Gravatar accout to show your icon."))
                            )) (d);
 
         var cookied_inputs = {nameinput: nameinput, mailinput: mailinput};
@@ -150,6 +153,7 @@ function initialize () {
     statcont.appendChild (stattext);
     stat.appendChild (statcont);
     b.appendChild (stat);
+    stat.style.backgroundColor = "#cccccc";
 
     var updatestat = function (text) {
         stattext.nodeValue = text;
