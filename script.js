@@ -85,18 +85,58 @@ function initialize () {
     var ul = d.createElement ("ul");
     b.appendChild (ul);
 
+    var out = function (t) {
+        var x = d.createElement ("li");
+        x.style.listStyle = "none";
+        x.style.clear = "both";
+        x.appendChild (t);
+        ul.appendChild (x);
+    }
+
     var form_elem;
     var nameinput;
     var mailinput;
     var inputtext;
     with (env) {
         nameinput = input ({type: "text", size: "20"}) (d);
+        nameinput.name = "nameinput";
         mailinput = input ({type: "text", size: "50"}) (d);
+        mailinput.name = "mailinput";
         inputtext = textarea ({style: "width:80%; height:10ex;"}) (d);
         form_elem = (form ("Nickname: ", ewrap (nameinput),
                            " Gravatar e-mail: ", ewrap (mailinput),
                            br (), ewrap (inputtext)
                            )) (d);
+
+        var cookied_inputs = {nameinput: nameinput, mailinput: mailinput};
+        for (var i in cookied_inputs) {
+            var e = cookied_inputs[i];
+            e.onchange = function () {
+                var exp = new Date();
+                exp.setTime (new Date ().getTime () + 1000 * 60 * 60 * 24 * 14); // 14 days
+                d.cookie = this.name + "=" + escape (this.value) + ";expires=" + exp.toGMTString ();
+
+                // out (d.createTextNode (d.cookie));
+            };
+        }
+
+        if (d.cookie) {
+            var lis = d.cookie.split (/;\s*/);
+            // out (d.createTextNode (d.cookie));
+            for (var i in lis) {
+                // out (d.createTextNode ("cookie: " + i + " = " + lis[i]));
+                var key_value = lis[i].split (/=/);
+                var key = key_value[0];
+                var val = key_value[1];
+
+                // out (d.createTextNode ("cookie key val: " + key + " = " + val));
+
+                var e = cookied_inputs[key];
+                if (e) {
+                    e.value = unescape (val);
+                }
+            }
+        }
     }
 
     // alert ([form_elem, nameinput, mailinput, inputtext].join (", "));
@@ -114,14 +154,6 @@ function initialize () {
     var updatestat = function (text) {
         stattext.nodeValue = text;
     };
-
-    var out = function (t) {
-        var x = d.createElement ("li");
-        x.style.listStyle = "none";
-        x.style.clear = "both";
-        x.appendChild (t);
-        ul.appendChild (x);
-    }
 
     window.onkeypress = function (ev) {
         if (ev.keyCode == 13 && !ev.shiftKey) {
