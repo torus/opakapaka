@@ -128,7 +128,7 @@ function initialize () {
     }
 
     window.onkeypress = function (ev) {
-        if (ev.keyCode == 13) {
+        if (ev.keyCode == 13 && !ev.shiftKey) {
             var text = inputtext.value;
             inputtext.value = "";
 
