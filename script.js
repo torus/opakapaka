@@ -116,7 +116,7 @@ function initialize () {
                            a ({href: "http://gravatar.com"}, "What's this?"),
                            br (), ewrap (inputtext),
                            p ("[TIPS] Press Shift+Enter to add a new line.  ",
-                              a ({href: "http://gravatar.com"}, "Get a Gravatar accout to show your icon."))
+                              a ({href: "http://gravatar.com"}, "Get a Gravatar account to show your icon."))
                            )) (d);
 
         var cookied_inputs = {nameinput: nameinput, mailinput: mailinput};
