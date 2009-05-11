@@ -9,16 +9,25 @@ D.prototype.chat_entry = function () {
     var img = make_dom_element ("img", "src");
     var p = make_dom_element ("p");
     var div = make_dom_element ("div");
-
-    // if (this.state.avatar_image)
-    //     this.outtext (this.state.avatar_image);
-    // this.outtext (this.state.nickname + ": " + this.state.content);
+    var br = make_dom_element ("br");
+    var table = make_dom_element ("table");
+    var td = make_dom_element ("td");
+    var tr = make_dom_element ("tr");
 
     var imgsrc = this.state.avatar_image;
 
-    var e = (div (imgsrc ? img ({src: imgsrc, style: "float: left;"}) : null,
-                  div (this.state.nickname),
-                  p ({style: "margin: 0px"}, this.state.content))) (document);
+    var e = (table (tr ({style: "background-color: rgb(255, 255, 100)"},
+                        td ({width: "50", height: "40", style: "vertical-align: top"},
+                            imgsrc ? img ({src: imgsrc}) : null),
+                        td ({style: "vertical-align: top"},
+                            this.state.nickname, br (),
+                            this.state.content)
+                        ))) (document);
+    // var e = (div (div ({style: "border: thin solid red; display: inline; height: 50px"},
+    //                    imgsrc ? img ({src: imgsrc, style: "vertical-align: top"}) : null),
+    //               div ({style: "border: thin solid red; display: inline; width: 50%; min-height: 50px; margin-left: 10px"},
+    //                    this.state.nickname, br (),
+    //                    this.state.content))) (document);
     this.out (e);
 };
 D.prototype.from = function (user) {
@@ -38,12 +47,9 @@ D.prototype.avatar_image = function (url) {
 };
 
 D.prototype.evaluate = function (elem) {
-    // this.out (elem);
     if (elem.nodeType == 1) {
         var func = elem.tagName;
         func = func.replace (/-/g, "_");
-
-        // this.out (func);
 
         var args = [];
         for (var e = elem.firstChild; e; e = e.nextSibling) {
@@ -66,33 +72,42 @@ function getDocHeight() {
     );
 }
 
+function ewrap (e) {
+    return function () {return e};
+}
+
 function initialize () {
     var d = document;
     var b = d.body;
+
+    var tags = ["ul", "li", "form", "input", "textarea", "div", "p", "br"];
+    var env = {};
+    for (var i in tags) {
+        var t = tags[i];
+        env[t] = make_dom_element (t);
+    }
+
     var ul = d.createElement ("ul");
-    var li = d.createElement ("li");
     b.appendChild (ul);
 
-    var f = d.createElement ("form");
-    b.appendChild (f);
+    var form_elem;
+    var nameinput;
+    var mailinput;
+    var inputtext;
+    with (env) {
+        nameinput = input ({type: "text", size: "20"}) (d);
+        mailinput = input ({type: "text", size: "50"}) (d);
+        inputtext = textarea ({style: "width:80%; height:10ex;"}) (d);
+        form_elem = (form ("Nickname: ", ewrap (nameinput),
+                           " Gravatar e-mail: ", ewrap (mailinput),
+                           br (), ewrap (inputtext)
+                           )) (d);
+    }
 
-    var nameinput = d.createElement ("input");
-    nameinput.setAttribute ("type", "text");
-    nameinput.setAttribute ("size", "20");
-    f.appendChild (d.createTextNode ("Nickname: "));
-    f.appendChild (nameinput);
+    // alert ([form_elem, nameinput, mailinput, inputtext].join (", "));
 
-    var mailinput = d.createElement ("input");
-    mailinput.setAttribute ("type", "text");
-    mailinput.setAttribute ("size", "50");
-    f.appendChild (d.createTextNode (" Gravatar e-mail: "));
-    f.appendChild (mailinput);
-    f.appendChild (d.createElement ("br"));
-
-    var inputtext = d.createElement ("textarea");
-    inputtext.setAttribute ("style", "width:80%; height:10ex;");
-    f.appendChild (inputtext);
-    f.onsubmit = function () {return false;}
+    form_elem.onsubmit = function () {return false;}
+    b.appendChild (form_elem);
 
     var stat = d.createElement ("div");
     var statcont = d.createElement ("p");
@@ -109,7 +124,6 @@ function initialize () {
         var x = d.createElement ("li");
         x.style.clear = "both";
         x.appendChild (t);
-        // x.appendChild (d.createTextNode (t));
         ul.appendChild (x);
     }
 
@@ -118,7 +132,6 @@ function initialize () {
             var text = inputtext.value;
             inputtext.value = "";
 
-            // out (mailinput.value)
             sendtext (d, inputtext, ul, nameinput.value, mailinput.value, text);
 
             return false;
