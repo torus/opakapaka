@@ -19,7 +19,7 @@
 (define (main args)
   (let* ((port (current-input-port))
          (doc (ssax:xml->sxml port ())))
-    (let ((out (open-output-file "data" :if-exists :append)))
+    (let ((out (open-output-file "data.log" :if-exists :append)))
       (lock out)
       (newline out)                  ; First, write a newline
       (write (cadr doc) out) ; Then, add a item so that the file always end with ")"

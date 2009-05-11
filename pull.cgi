@@ -15,7 +15,7 @@
                           (content ,@exps))))))))))
 
 (define (read-from-log pos)
-  (let ((port (open-input-file "data")))
+  (let ((port (open-input-file "data.log")))
     (let wait-loop ((count 0))
       (let ((end (port-seek port 0 SEEK_END)))
         (if (> end pos)
