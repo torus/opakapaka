@@ -16,18 +16,13 @@ D.prototype.chat_entry = function () {
 
     var imgsrc = this.state.avatar_image;
 
-    var e = (table (tr ({style: "background-color: rgb(255, 255, 100)"},
+    var e = (table (tr ({style: "background-color: rgb(200, 200, 255)"},
                         td ({width: "50", height: "40", style: "vertical-align: top"},
                             imgsrc ? img ({src: imgsrc}) : null),
                         td ({style: "vertical-align: top"},
                             this.state.nickname, br (),
                             this.state.content)
                         ))) (document);
-    // var e = (div (div ({style: "border: thin solid red; display: inline; height: 50px"},
-    //                    imgsrc ? img ({src: imgsrc, style: "vertical-align: top"}) : null),
-    //               div ({style: "border: thin solid red; display: inline; width: 50%; min-height: 50px; margin-left: 10px"},
-    //                    this.state.nickname, br (),
-    //                    this.state.content))) (document);
     this.out (e);
 };
 D.prototype.from = function (user) {
@@ -122,6 +117,7 @@ function initialize () {
 
     var out = function (t) {
         var x = d.createElement ("li");
+        x.style.listStyle = "none";
         x.style.clear = "both";
         x.appendChild (t);
         ul.appendChild (x);
