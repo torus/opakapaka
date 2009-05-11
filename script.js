@@ -13,15 +13,23 @@ D.prototype.chat_entry = function () {
     var table = make_dom_element ("table");
     var td = make_dom_element ("td");
     var tr = make_dom_element ("tr");
+    var span = make_dom_element ("span");
 
     var imgsrc = this.state.avatar_image;
+
+    var lines = this.state.content.split (/\r*\n/);
+    var lines_with_br = [lines[0]];
+    for (var i = 1; i < lines.length; i ++) {
+        lines_with_br.push (br ());
+        lines_with_br.push (lines[i]);
+    }
 
     var e = (table (tr ({style: "background-color: rgb(200, 200, 255)"},
                         td ({width: "50", height: "40", style: "vertical-align: top"},
                             imgsrc ? img ({src: imgsrc}) : null),
-                        td ({style: "vertical-align: top"},
-                            this.state.nickname, br (),
-                            this.state.content)
+                        td.apply (this, [{style: "vertical-align: top"},
+                                         span ({style: "font-weight: bold;"}, this.state.nickname),
+                                         br ()].concat (lines_with_br))
                         ))) (document);
     this.out (e);
 };
