@@ -24,10 +24,11 @@ D.prototype.chat_entry = function () {
         lines_with_br.push (lines[i]);
     }
 
-    var e = (table (tr ({style: "background-color: rgb(200, 200, 255)"},
+    var e = (table ({style: "width: 80%"},
+                    tr ({style: "background-color: rgb(200, 200, 255)"},
                         td ({width: "50", height: "40", style: "vertical-align: top"},
                             imgsrc ? img ({src: imgsrc}) : null),
-                        td.apply (this, [{style: "vertical-align: top"},
+                        td.apply (this, [{style: "vertical-align: top;"},
                                          span ({style: "font-weight: bold;"}, this.state.nickname),
                                          br ()].concat (lines_with_br))
                         ))) (document);
@@ -83,14 +84,20 @@ function initialize () {
     var d = document;
     var b = d.body;
 
-    var tags = ["ul", "li", "form", "input", "textarea", "div", "p", "br", "a"];
+    var tags = ["h1", "h2", "ul", "li", "form", "input", "textarea", "div", "p", "br", "a"];
     var env = {};
     for (var i in tags) {
         var t = tags[i];
         env[t] = make_dom_element (t);
     }
 
+    with (env) {
+        var head = (h1 ("Web chat")) (d);
+        b.appendChild (head);
+    }
+
     var ul = d.createElement ("ul");
+    ul.style.padding = "0px";
     b.appendChild (ul);
 
     var out = function (t) {
@@ -178,6 +185,8 @@ function initialize () {
         }
     };
 
+    var initial = true;
+
     var pos = 0;
     function get_log () {
         var client = new XMLHttpRequest();
@@ -197,7 +206,8 @@ function initialize () {
                     var scrollY = window.pageYOffset || document.body.scrollTop;
                     var threshold = getDocHeight () - window.innerHeight * 1.5;
                     updatestat ("new pos = " + pos + " scrollY = " + scrollY + " threshold = " + threshold);
-                    if (scrollY > threshold) {
+                    if (initial || scrollY > threshold) {
+                        initial = false;
                         window.scrollTo (0, getDocHeight () - window.innerHeight);
                     }
 
