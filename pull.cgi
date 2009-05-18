@@ -26,8 +26,9 @@
                     (port-seek port pos)
                     (let ((exp (read port)))
                       (loop (port-tell port) (cons exp part))))
-                  (values (reverse part) pos)))
-            (if (> count 30) (values () pos)
-              (begin
-                (sys-sleep 1)
-                (wait-loop (+ count 1)))))))))
+                  (ret (reverse part) pos)))
+            (if (> count 30)
+                (ret () pos)
+                (begin
+                  (sys-sleep 1)
+                  (wait-loop (+ count 1)))))))))

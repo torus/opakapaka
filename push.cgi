@@ -7,11 +7,9 @@
 (use www.cgi)
 (use text.tree)
 
-(define (lock port)
+(define (with-output-to-locked-port port thunk)
   (sys-fcntl port F_SETLKW (make <sys-flock> :type F_WRLCK))
-  )
-
-(define (unlock port)
+  (with-output-to-port port thunk)
   (sys-fcntl port F_SETLK (make <sys-flock> :type F_UNLCK))
   )
 
@@ -20,11 +18,11 @@
   (let* ((port (current-input-port))
          (doc (ssax:xml->sxml port ())))
     (let ((out (open-output-file "data.log" :if-exists :append)))
-      (lock out)
-      (newline out)                  ; First, write a newline
-      (write (cadr doc) out) ; Then, add a item so that the file always end with ")"
-      (unlock out)
-      ))
+      (with-output-to-locked-port out
+         (lambda ()
+           (newline)                    ; First, write a newline
+           (write (cadr doc)) ; Then, add a item so that the file always end with ")"
+           ))))
   (write-tree
    `(,(cgi-header))
    )

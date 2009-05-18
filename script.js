@@ -164,7 +164,7 @@ function initialize () {
 
     var stat = d.createElement ("div");
     var statcont = d.createElement ("p");
-    var stattext = d.createTextNode ("initiazelid");
+    var stattext = d.createTextNode ("initiazelid.  waiting for data...");
     statcont.appendChild (stattext);
     stat.appendChild (statcont);
     b.appendChild (stat);
@@ -211,7 +211,7 @@ function initialize () {
                         window.scrollTo (0, getDocHeight () - window.innerHeight);
                     }
 
-                    get_log ();
+                    setTimeout (get_log, 100);
                 } else {
                     updatestat ("status = " + this.status);
                     setTimeout (get_log, 3000);
