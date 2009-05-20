@@ -12,7 +12,9 @@
          ,(srl:sxml->xml-noindent
            (receive (exps pos) (read-from-log last-pos)
              `(*TOP* (res (pos ,pos)
-                          (content ,@exps))))))))))
+                          (content ,@(pull-filter exps)))))))))))
+
+(define (pull-filter x) x)
 
 (define (read-from-log pos)
   (let ((port (open-input-file "data.log")))
@@ -26,9 +28,9 @@
                     (port-seek port pos)
                     (let ((exp (read port)))
                       (loop (port-tell port) (cons exp part))))
-                  (ret (reverse part) pos)))
+                  (values (reverse part) pos)))
             (if (> count 30)
-                (ret () pos)
+                (values () pos)
                 (begin
                   (sys-sleep 1)
                   (wait-loop (+ count 1)))))))))

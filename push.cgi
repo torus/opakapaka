@@ -13,17 +13,17 @@
   (sys-fcntl port F_SETLK (make <sys-flock> :type F_UNLCK))
   )
 
+(define (push-filter x) x)
 
 (define (main args)
   (let* ((port (current-input-port))
          (doc (ssax:xml->sxml port ())))
-    (let ((out (open-output-file "data.log" :if-exists :append)))
+    (let ((out (open-output-file "data.log" :if-exists :append))
+          (doc (push-filter (cadr doc))))
       (with-output-to-locked-port out
          (lambda ()
            (newline)                    ; First, write a newline
-           (write (cadr doc)) ; Then, add a item so that the file always end with ")"
+           (write doc) ; Then, add a item so that the file always end with ")"
            ))))
   (write-tree
-   `(,(cgi-header))
-   )
-  )
+   `(,(cgi-header))))
