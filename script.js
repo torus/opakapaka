@@ -284,7 +284,7 @@ function make_dom_element (tag) {
     }
 
     return dest;
-};
+}
 
 function test_function () {
     var img = make_dom_element ("img");
