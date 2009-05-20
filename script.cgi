@@ -8,7 +8,7 @@
   (write-tree
    `(,(cgi-header :content-type "text/javascript")
      (;; "// -*- mode: java; indent-tabs-mode: nil -*-"
-      ""
+
       "D = function (output) {"
       "    this.state = {};"
       "    this.outtext = function (t) {output (document.createTextNode (t))};"
@@ -23,16 +23,16 @@
       "    var td = make_dom_element (\"td\");"
       "    var tr = make_dom_element (\"tr\");"
       "    var span = make_dom_element (\"span\");"
-      ""
+
       "    var imgsrc = this.state.avatar_image;"
-      ""
+
       "    var lines = this.state.content.split (/\\r*\\n/);"
       "    var lines_with_br = [lines[0]];"
       "    for (var i = 1; i < lines.length; i ++) {"
       "        lines_with_br.push (br ());"
       "        lines_with_br.push (lines[i]);"
       "    }"
-      ""
+
       "    var e = (table ({style: \"width: 80%\"},"
       "                    tr ({style: \"background-color: rgb(200, 200, 255)\"},"
       "                        td ({width: \"50\", height: \"40\", style: \"vertical-align: top\"},"
@@ -58,7 +58,7 @@
       "D.prototype.avatar_image = function (url) {"
       "    this.state.avatar_image = url;"
       "};"
-      ""
+
       "D.prototype.evaluate = function (elem) {"
       "    if (elem.nodeType == 1) {"
       "        var func = elem.tagName;"
@@ -74,7 +74,7 @@
       "        return elem;"
       "    }"
       "};"
-      ""
+
       ;; "// http://james.padolsey.com/javascript/get-document-height-cross-browser/"
       "function getDocHeight() {"
       "    var D = document;"
@@ -84,31 +84,31 @@
       "        Math.max(D.body.clientHeight, D.documentElement.clientHeight)"
       "    );"
       "}"
-      ""
+
       "function ewrap (e) {"
       "    return function () {return e};"
       "}"
-      ""
+
       "function initialize () {"
       "    var d = document;"
       "    var b = d.body;"
-      ""
+
       "    var tags = [\"h1\", \"h2\", \"ul\", \"li\", \"form\", \"input\", \"textarea\", \"div\", \"p\", \"br\", \"a\"];"
       "    var env = {};"
       "    for (var i in tags) {"
       "        var t = tags[i];"
       "        env[t] = make_dom_element (t);"
       "    }"
-      ""
+
       "    with (env) {"
       "        var head = (h1 (\"Web chat\")) (d);"
       "        b.appendChild (head);"
       "    }"
-      ""
+
       "    var ul = d.createElement (\"ul\");"
       "    ul.style.padding = \"0px\";"
       "    b.appendChild (ul);"
-      ""
+
       "    var out = function (t) {"
       "        var x = d.createElement (\"li\");"
       "        x.style.listStyle = \"none\";"
@@ -116,7 +116,7 @@
       "        x.appendChild (t);"
       "        ul.appendChild (x);"
       "    };"
-      ""
+
       "    var form_elem;"
       "    var nameinput;"
       "    var mailinput;"
@@ -134,7 +134,7 @@
       "                           p (\"[TIPS] Press Shift+Enter to add a new line.  \","
       "                              a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\"))"
       "                           )) (d);"
-      ""
+
       "        var cookied_inputs = {nameinput: nameinput, mailinput: mailinput};"
       "        for (var i in cookied_inputs) {"
       "            var e = cookied_inputs[i];"
@@ -142,11 +142,11 @@
       "                var exp = new Date();"
       "                exp.setTime (new Date ().getTime () + 1000 * 60 * 60 * 24 * 14);" ; // 14 days
       "                d.cookie = this.name + \"=\" + escape (this.value) + \";expires=\" + exp.toGMTString ();"
-      ""
+
       ;; "                // out (d.createTextNode (d.cookie));"
       "            };"
       "        }"
-      ""
+
       "        if (d.cookie) {"
       "            var lis = d.cookie.split (/;\\s*/);"
       ;; "            // out (d.createTextNode (d.cookie));"
@@ -155,7 +155,7 @@
       "                var key_value = lis[i].split (/=/);"
       "                var key = key_value[0];"
       "                var val = key_value[1];"
-      ""
+
       ;; "                // out (d.createTextNode (\"cookie key val: \" + key + \" = \" + val));"
       ""
       "                var e = cookied_inputs[key];"
@@ -165,12 +165,12 @@
       "            }"
       "        }"
       "    }"
-      ""
+
       ;; "    // alert ([form_elem, nameinput, mailinput, inputtext].join (\", \"));"
-      ""
+
       "    form_elem.onsubmit = function () {return false;};"
       "    b.appendChild (form_elem);"
-      ""
+
       "    var stat = d.createElement (\"div\");"
       "    var statcont = d.createElement (\"p\");"
       "    var stattext = d.createTextNode (\"initiazelid.  waiting for data...\");"
@@ -178,24 +178,24 @@
       "    stat.appendChild (statcont);"
       "    b.appendChild (stat);"
       "    stat.style.backgroundColor = \"#cccccc\";"
-      ""
+
       "    var updatestat = function (text) {"
       "        stattext.nodeValue = text;"
       "    };"
-      ""
+
       "    window.onkeypress = function (ev) {"
       "        if (ev.keyCode == 13 && !ev.shiftKey) {"
       "            var text = inputtext.value;"
       "            inputtext.value = \"\";"
-      ""
+
       "            sendtext (d, inputtext, ul, nameinput.value, mailinput.value, text);"
-      ""
+
       "            return false;"
       "        }"
       "    };"
-      ""
+
       "    var initial = true;"
-      ""
+
       "    var pos = 0;"
       "    function get_log () {"
       "        var client = new XMLHttpRequest();"
@@ -206,12 +206,12 @@
       "                if (this.status == 200) {"
       "                    var doc = this.responseXML;"
       "                    pos = doc.getElementsByTagName (\"pos\")[0].firstChild.data;"
-      ""
+
       "                    for (var e = doc.getElementsByTagName (\"content\")[0].firstChild; e; e = e.nextSibling) {"
       "                        var x = new D (out);"
       "                        x.evaluate (e);"
       "                    }"
-      ""
+
       "                    var scrollY = window.pageYOffset || document.body.scrollTop;"
       "                    var threshold = getDocHeight () - window.innerHeight * 1.5;"
       "                    updatestat (\"new pos = \" + pos + \" scrollY = \" + scrollY + \" threshold = \" + threshold);"
@@ -219,7 +219,7 @@
       "                        initial = false;"
       "                        window.scrollTo (0, getDocHeight () - window.innerHeight);"
       "                    }"
-      ""
+
       "                    setTimeout (get_log, 100);"
       "                } else {"
       "                    updatestat (\"status = \" + this.status);"
@@ -230,7 +230,7 @@
       "    }"
       "    get_log ();"
       "}"
-      ""
+
       "function sendtext (d, inputtext, ul, name, mail, text) {"
       "    var chat_entry = make_dom_element (\"chat-entry\");"
       "    var from = make_dom_element (\"from\");"
@@ -238,40 +238,40 @@
       "    var avatar_img = make_dom_element (\"avatar-image\");"
       "    var string = make_dom_element (\"string\");"
       "    var content = make_dom_element (\"content\");"
-      ""
+
       "    if (!(name && name.length > 0)) {"
       "        name = \"Anonymous\";"
       "    }"
-      ""
+
       "    var avatar_elem = null;"
       "    if (mail && mail.length > 0) {"
       "        avatar_elem = avatar_img (string (\"http://www.gravatar.com/avatar/\""
       "                                          + hex_md5 (mail.toLowerCase ()) + \"?s=40\"));"
       "    }"
-      ""
+
       "    var doc = document.implementation.createDocument (\"\", \"\", null);"
       "    var elem = (chat_entry (from (user_by_nickname (string (name)),"
       "                                  avatar_elem),"
       "                            content (string (text)))) (doc);"
-      ""
+
       "    doc.appendChild (elem);"
-      ""
+
       "    var client = new XMLHttpRequest();"
       "    client.open(\"POST\", \"./push.cgi\");"
       "    client.setRequestHeader(\"Content-Type\", \"text/xml;charset=UTF-8\");"
       "    client.send(doc);"
       "}"
-      ""
+
       "function make_dom_element (tag) {"
       "    var attrs = [];"
       "    for (var i = 1; i < arguments.length; i ++) {"
       "        attrs.push (arguments[i]);"
       "    }"
-      ""
+
       "    var dest = function () {"
       "        var args = arguments;"
       "        var len = arguments.length;"
-      ""
+
       "        return function (doc) {"
       "            var e = doc.createElement (tag);"
       "            for (var i = 0; i < len; i ++) {"
@@ -291,25 +291,25 @@
       "            return e;"
       "        }"
       "    };"
-      ""
+
       "    return dest;"
       "};"
-      ""
+
       "function test_function () {"
       "    var img = make_dom_element (\"img\");"
       "    var p = make_dom_element (\"p\");"
       "    var div = make_dom_element (\"div\");"
-      ""
+
       "    var e = (div ({\"class\": \"hoge\", id: \"fuga\"},"
       "                  img ({src: \"http://hoge/fuga.jpg\"}),"
       "                  p (\"anananan\"))) (document);"
       "    alert (e);"
-      ""
+
       "    document.body.appendChild (e);"
       "}"
-      ""
+
       ;; "// test_function ()"
-      ""
+
       ;; "// delay to prevent spin gear on Safari"
       "setTimeout (initialize, 1);"
       )
