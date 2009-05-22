@@ -16,6 +16,22 @@
 (define (js-with obj . body) (list "with(" obj "){" body "}"))
 (define (js-defvar v) (list "var" " " v))
 
+(define-syntax js-let
+  (syntax-rules ()
+    ((_ (vars ...) body ...)
+     (js-let-helper () (vars ...) body ...)
+     )))
+
+(define-syntax js-let-helper
+  (syntax-rules ()
+    ((_ ((var init) ...) () body ...)
+     (let ((var (string-append "$" (symbol->string (gensym)))) ...)
+       (list (js-statement (js-defvar var) init) ...
+             body ...)))
+    ((_ (part ...) (var rest ...) body ...)
+     (js-let-helper (part ... var) (rest ...) body ...))
+    ))
+
 (define (main args)
   (write-tree
    `(,(cgi-header :content-type "text/javascript")
@@ -232,17 +248,20 @@
                                  (js-statement "stattext.nodeValue = text")
                                  ))
 
-      (js-statement "window.onkeypress = "
-                    (js-anon-fun "(ev)"
-                                 (js-if "ev.keyCode == 13 && !ev.shiftKey"
-                                        (js-statement (js-defvar "text") "= inputtext.value")
-                                        (js-statement "inputtext.value = \"\"")
-
-                                        (js-statement "sendtext (d, inputtext, ul, nameinput.value, mailinput.value, text)")
-
-                                        (js-statement "return false")
-                                 )
-                                 ))
+      (js-statement
+       "window.onkeypress = "
+       (js-anon-fun
+        "(ev)"
+        (js-if "ev.keyCode == 13 && !ev.shiftKey"
+               ;; (let ((var "text"))
+               ;;   (js-statement (js-defvar var) "= inputtext.value")
+               (js-let
+                ((text "= inputtext.value"))
+                 (js-statement "inputtext.value = \"\"")
+                 (js-statement "sendtext (d, inputtext, ul, nameinput.value, mailinput.value, " text ")")
+                 (js-statement "return false")
+                 )
+               )))
 
       (js-statement (js-defvar "initial") "= true")
 
