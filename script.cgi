@@ -14,6 +14,7 @@
 (define (js-else-if condition . body) (list "else" " " (apply js-if condition body)))
 (define (js-else . body) (list "else{" body "}"))
 (define (js-with obj . body) (list "with(" obj "){" body "}"))
+(define (js-defvar v) (list "var" " " v))
 
 (define (main args)
   (write-tree
@@ -30,21 +31,21 @@
         "D.prototype.chat_entry = "
         (js-anon-fun
           "()"
-          (js-statement "var img = make_dom_element (\"img\", \"src\")")
-          (js-statement "var p = make_dom_element (\"p\")")
-          (js-statement "var div = make_dom_element (\"div\")")
-          (js-statement "var br = make_dom_element (\"br\")")
-          (js-statement "var table = make_dom_element (\"table\")")
-          (js-statement "var td = make_dom_element (\"td\")")
-          (js-statement "var tr = make_dom_element (\"tr\")")
-          (js-statement "var span = make_dom_element (\"span\")")
+          (js-statement (js-defvar "img") "= make_dom_element (\"img\", \"src\")")
+          (js-statement (js-defvar "p") "= make_dom_element (\"p\")")
+          (js-statement (js-defvar "div") "= make_dom_element (\"div\")")
+          (js-statement (js-defvar "br") "= make_dom_element (\"br\")")
+          (js-statement (js-defvar "table") "= make_dom_element (\"table\")")
+          (js-statement (js-defvar "td") "= make_dom_element (\"td\")")
+          (js-statement (js-defvar "tr") "= make_dom_element (\"tr\")")
+          (js-statement (js-defvar "span") "= make_dom_element (\"span\")")
 
-          (js-statement "var imgsrc = this.state.avatar_image")
+          (js-statement (js-defvar "imgsrc") "= this.state.avatar_image")
 
-          (js-statement "var lines = this.state.content.split (/\\r*\\n/)")
-          (js-statement "var lines_with_br = [lines[0]]")
+          (js-statement (js-defvar "lines") "= this.state.content.split (/\\r*\\n/)")
+          (js-statement (js-defvar "lines") "_with_br = [lines[0]]")
           (js-for
-           (js-statement "var i = 1")
+           (js-statement (js-defvar "i") "= 1")
            (js-statement "i < lines.length")
            (js-statement* "i ++")
 
@@ -53,7 +54,7 @@
            )
 
           (js-statement
-            "var e = (table ({style: \"width: 80%\"},"
+            (js-defvar "e") "= (table ({style: \"width: 80%\"},"
             "tr ({style: \"background-color: rgb(200, 200, 255)\"},"
             "td ({width: \"50\", height: \"40\", style: \"vertical-align: top\"},"
             "imgsrc ? img ({src: imgsrc}) : null),"
@@ -104,11 +105,11 @@
         (js-anon-fun
          "(elem)"
          (js-if "elem.nodeType == 1"
-                (js-statement "var func = elem.tagName")
+                (js-statement (js-defvar "func") "= elem.tagName")
                 (js-statement "func = func.replace (/-/g, \"_\")")
 
-                (js-statement "var args = []")
-                (js-for (js-statement "var e = elem.firstChild") (js-statement "e") (js-statement* "e = e.nextSibling")
+                (js-statement (js-defvar "args") "= []")
+                (js-for (js-statement (js-defvar "e") "= elem.firstChild") (js-statement "e") (js-statement* "e = e.nextSibling")
                         (js-statement "args.push (this.evaluate (e))")
                         )
 
@@ -122,7 +123,7 @@
       ;; "// http://james.padolsey.com/javascript/get-document-height-cross-browser/"
       ,(js-defun
         "getDocHeight" "()"
-        (js-statement "var D = document")
+        (js-statement (js-defvar "D") "= document")
         (js-statement
          "return Math.max("
          "Math.max(D.body.scrollHeight, D.documentElement.scrollHeight),"
@@ -138,38 +139,38 @@
 
       ,(js-defun
       "initialize" "()"
-      (js-statement "var d = document")
-      (js-statement "var b = d.body")
+      (js-statement (js-defvar "d") "= document")
+      (js-statement (js-defvar "b") "= d.body")
 
-      (js-statement "var tags = [\"h1\", \"h2\", \"ul\", \"li\", \"form\", \"input\", \"textarea\", \"div\", \"p\", \"br\", \"a\"]")
-      (js-statement "var env = {}")
-      (js-for-each "var i in tags"
-                   (js-statement "var t = tags[i]")
+      (js-statement (js-defvar "tags") "= [\"h1\", \"h2\", \"ul\", \"li\", \"form\", \"input\", \"textarea\", \"div\", \"p\", \"br\", \"a\"]")
+      (js-statement (js-defvar "env") "= {}")
+      (js-for-each (js-statement* (js-defvar "i") " " "in tags")
+                   (js-statement (js-defvar "t") " " "= tags[i]")
                    (js-statement "env[t] = make_dom_element (t)")
                    )
 
       (js-with "env"
-               (js-statement "var head = (h1 (\"Web chat\")) (d)")
+               (js-statement (js-defvar "head") "= (h1 (\"Web chat\")) (d)")
                (js-statement "b.appendChild (head)")
                )
 
-      (js-statement "var ul = d.createElement (\"ul\")")
+      (js-statement (js-defvar "ul") "= d.createElement (\"ul\")")
       (js-statement "ul.style.padding = \"0px\"")
       (js-statement "b.appendChild (ul)")
 
-      (js-statement "var out = "
+      (js-statement (js-defvar "out") "= "
                     (js-anon-fun "(t)"
-                                 (js-statement "var x = d.createElement (\"li\")")
+                                 (js-statement (js-defvar "x") "= d.createElement (\"li\")")
                                  (js-statement "x.style.listStyle = \"none\"")
                                  (js-statement "x.style.clear = \"both\"")
                                  (js-statement "x.appendChild (t)")
                                  (js-statement "ul.appendChild (x)")
                                  ))
 
-      (js-statement "var form_elem")
-      (js-statement "var nameinput")
-      (js-statement "var mailinput")
-      (js-statement "var inputtext")
+      (js-statement (js-defvar "form") "_elem")
+      (js-statement (js-defvar "nameinput") )
+      (js-statement (js-defvar "mailinput") )
+      (js-statement (js-defvar "inputtext") )
       (js-with "env"
                (js-statement "nameinput = input ({type: \"text\", size: \"20\"}) (d)")
                (js-statement "nameinput.name = \"nameinput\"")
@@ -184,28 +185,28 @@
                              "a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\"))"
                              ")) (d)")
 
-               (js-statement "var cookied_inputs = {nameinput: nameinput, mailinput: mailinput}")
-               (js-for-each "var i in cookied_inputs"
-                            (js-statement "var e = cookied_inputs[i]")
+               (js-statement (js-defvar "cookied_inputs") "= {nameinput: nameinput, mailinput: mailinput}")
+               (js-for-each (js-statement* (js-defvar "i") " " "in cookied_inputs")
+                            (js-statement (js-defvar "e") "= cookied_inputs[i]")
                             (js-statement
                              "e.onchange = "
                              (js-anon-fun
                               "()"
-                              (js-statement "var exp = new Date()")
+                              (js-statement (js-defvar "exp") "= new Date()")
                               (js-statement "exp.setTime (new Date ().getTime () + 1000 * 60 * 60 * 24 * 14)") ; // 14 days
                               (js-statement "d.cookie = this.name + \"=\"+ escape (this.value) + \";expires=\"+ exp.toGMTString ()")
                               ))
                             )
 
                (js-if "d.cookie"
-                      (js-statement "var lis = d.cookie.split (/;\\s*/)")
+                      (js-statement (js-defvar "lis") "= d.cookie.split (/;\\s*/)")
                       ;; ,(js-statement "// out (d.createTextNode (d.cookie))")
-                      (js-for-each "var i in lis"
-                                   (js-statement "var key_value = lis[i].split (/=/)")
-                                   (js-statement "var key = key_value[0]")
-                                   (js-statement "var val = key_value[1]")
+                      (js-for-each (js-statement* (js-defvar "i") " " "in lis")
+                                   (js-statement (js-defvar "key") "_value = lis[i].split (/=/)")
+                                   (js-statement (js-defvar "key") "= key_value[0]")
+                                   (js-statement (js-defvar "val") "= key_value[1]")
 
-                                   (js-statement "var e = cookied_inputs[key]")
+                                   (js-statement (js-defvar "e") "= cookied_inputs[key]")
                                    (js-if "e"
                                           (js-statement "e.value = unescape (val)")
                                           )
@@ -218,15 +219,15 @@
       (js-statement "form_elem.onsubmit = " (js-anon-fun "()" (js-statement "return false")))
       (js-statement "b.appendChild (form_elem)")
 
-      (js-statement "var stat = d.createElement (\"div\")")
-      (js-statement "var statcont = d.createElement (\"p\")")
-      (js-statement "var stattext = d.createTextNode (\"initiazelid.  waiting for data...\")")
+      (js-statement (js-defvar "stat") "= d.createElement (\"div\")")
+      (js-statement (js-defvar "statcont") "= d.createElement (\"p\")")
+      (js-statement (js-defvar "stattext") "= d.createTextNode (\"initiazelid.  waiting for data...\")")
       (js-statement "statcont.appendChild (stattext)")
       (js-statement "stat.appendChild (statcont)")
       (js-statement "b.appendChild (stat)")
       (js-statement "stat.style.backgroundColor = \"#cccccc\"")
 
-      (js-statement "var updatestat = "
+      (js-statement (js-defvar "updatestat") "= "
                     (js-anon-fun "(text)"
                                  (js-statement "stattext.nodeValue = text")
                                  ))
@@ -234,7 +235,7 @@
       (js-statement "window.onkeypress = "
                     (js-anon-fun "(ev)"
                                  (js-if "ev.keyCode == 13 && !ev.shiftKey"
-                                        (js-statement "var text = inputtext.value")
+                                        (js-statement (js-defvar "text") "= inputtext.value")
                                         (js-statement "inputtext.value = \"\"")
 
                                         (js-statement "sendtext (d, inputtext, ul, nameinput.value, mailinput.value, text)")
@@ -243,11 +244,11 @@
                                  )
                                  ))
 
-      (js-statement "var initial = true")
+      (js-statement (js-defvar "initial") "= true")
 
-      (js-statement "var pos = 0")
+      (js-statement (js-defvar "pos") "= 0")
       (js-defun "get_log" "()"
-                (js-statement "var client = new XMLHttpRequest()")
+                (js-statement (js-defvar "client") "= new XMLHttpRequest()")
                 (js-statement "client.open(\"GET\", \"./pull.cgi?p=\" + pos, true)")
                 (js-statement "client.send(null)")
                 (js-statement
@@ -255,20 +256,20 @@
                  (js-anon-fun "()"
                               (js-if "this.readyState == 4"
                                      (js-if "this.status == 200"
-                                            (js-statement "var doc = this.responseXML")
+                                            (js-statement (js-defvar "doc") "= this.responseXML")
                                             (js-statement "pos = doc.getElementsByTagName (\"pos\")[0].firstChild.data")
 
                                             (js-for
-                                             (js-statement "var e = doc.getElementsByTagName (\"content\")[0].firstChild")
+                                             (js-statement (js-defvar "e") "= doc.getElementsByTagName (\"content\")[0].firstChild")
                                              (js-statement "e")
                                              (js-statement* "e = e.nextSibling")
 
-                                             (js-statement "var x = new D (out)")
+                                             (js-statement (js-defvar "x") "= new D (out)")
                                              (js-statement "x.evaluate (e)")
                                              )
 
-                                            (js-statement "var scrollY = window.pageYOffset || document.body.scrollTop")
-                                            (js-statement "var threshold = getDocHeight () - window.innerHeight * 1.5")
+                                            (js-statement (js-defvar "scrollY") "= window.pageYOffset || document.body.scrollTop")
+                                            (js-statement (js-defvar "threshold") "= getDocHeight () - window.innerHeight * 1.5")
                                             (js-statement "updatestat (\"new pos = \" + pos + \" scrollY = \" + scrollY + \" threshold = \" + threshold)")
                                             (js-if "initial || scrollY > threshold"
                                                    (js-statement "initial = false")
@@ -288,31 +289,31 @@
 
       ,(js-defun
       "sendtext" "(d, inputtext, ul, name, mail, text)"
-      (js-statement "var chat_entry = make_dom_element (\"chat-entry\")")
-      (js-statement "var from = make_dom_element (\"from\")")
-      (js-statement "var user_by_nickname = make_dom_element (\"user-by-nickname\")")
-      (js-statement "var avatar_img = make_dom_element (\"avatar-image\")")
-      (js-statement "var string = make_dom_element (\"string\")")
-      (js-statement "var content = make_dom_element (\"content\")")
+      (js-statement (js-defvar "chat") "_entry = make_dom_element (\"chat-entry\")")
+      (js-statement (js-defvar "from") "= make_dom_element (\"from\")")
+      (js-statement (js-defvar "user") "_by_nickname = make_dom_element (\"user-by-nickname\")")
+      (js-statement (js-defvar "avatar") "_img = make_dom_element (\"avatar-image\")")
+      (js-statement (js-defvar "string") "= make_dom_element (\"string\")")
+      (js-statement (js-defvar "content") "= make_dom_element (\"content\")")
 
       (js-if "!(name && name.length > 0)"
              (js-statement "name = \"Anonymous\"")
              )
 
-      (js-statement "var avatar_elem = null")
+      (js-statement (js-defvar "avatar") "_elem = null")
       (js-if "mail && mail.length > 0"
              (js-statement "avatar_elem = avatar_img (string (\"http://www.gravatar.com/avatar/\""
                            "+ hex_md5 (mail.toLowerCase ()) + \"?s=40\"))")
              )
 
-      (js-statement "var doc = document.implementation.createDocument (\"\", \"\", null)")
-      (js-statement "var elem = (chat_entry (from (user_by_nickname (string (name)),"
+      (js-statement (js-defvar "doc") "= document.implementation.createDocument (\"\", \"\", null)")
+      (js-statement (js-defvar "elem") "= (chat_entry (from (user_by_nickname (string (name)),"
                      "avatar_elem),"
                      "content (string (text)))) (doc)")
 
       (js-statement "doc.appendChild (elem)")
 
-      (js-statement "var client = new XMLHttpRequest()")
+      (js-statement (js-defvar "client") "= new XMLHttpRequest()")
       (js-statement "client.open(\"POST\", \"./push.cgi\")")
       (js-statement "client.setRequestHeader(\"Content-Type\", \"text/xml;charset=UTF-8\")")
       (js-statement "client.send(doc)")
@@ -320,32 +321,32 @@
 
       ,(js-defun
         "make_dom_element" "(tag)"
-        (js-statement "var attrs = []")
-        (js-for (js-statement "var i = 1") (js-statement "i < arguments.length") (js-statement* "i ++")
+        (js-statement (js-defvar "attrs") "= []")
+        (js-for (js-statement (js-defvar "i") "= 1") (js-statement "i < arguments.length") (js-statement* "i ++")
                 (js-statement "attrs.push (arguments[i])")
                 )
 
         (js-statement
-         "var dest = "
+         (js-defvar "dest") "= "
          (js-anon-fun "()"
-                      (js-statement "var args = arguments")
-                      (js-statement "var len = arguments.length")
+                      (js-statement (js-defvar "args") "= arguments")
+                      (js-statement (js-defvar "len") "= arguments.length")
 
                       (js-statement "return " (js-anon-fun "(doc)"
-                      (js-statement "var e = doc.createElement (tag)")
-                      (js-for (js-statement "var i = 0") (js-statement "i < len") (js-statement* "i ++")
-                              (js-statement "var c = args[i]")
+                      (js-statement (js-defvar "e") "= doc.createElement (tag)")
+                      (js-for (js-statement (js-defvar "i") "= 0") (js-statement "i < len") (js-statement* "i ++")
+                              (js-statement (js-defvar "c") "= args[i]")
                               (js-if "c == null" (js-statement "continue"))
                               (js-if "typeof (c) == \"function\""
                                      (js-statement "e.appendChild (args[i](doc))")
                                      )
                               (js-else-if "typeof (c) == \"object\""
-                                          (js-for-each "var j in c"
+                                          (js-for-each (js-statement* (js-defvar "j") " " "in c")
                                                        (js-statement "e.setAttribute (j, c[j])")
                                                        )
                                           )
                               (js-else
-                               (js-statement "var t = doc.createTextNode (c)")
+                               (js-statement ""(js-defvar "t") "= doc.createTextNode (c)")
                                (js-statement "e.appendChild (t)")
                                )
                               )
