@@ -43,7 +43,7 @@
           (js-statement (js-defvar "imgsrc") "= this.state.avatar_image")
 
           (js-statement (js-defvar "lines") "= this.state.content.split (/\\r*\\n/)")
-          (js-statement (js-defvar "lines") "_with_br = [lines[0]]")
+          (js-statement (js-defvar "lines_with_br") " = [lines[0]]")
           (js-for
            (js-statement (js-defvar "i") "= 1")
            (js-statement "i < lines.length")
@@ -167,10 +167,10 @@
                                  (js-statement "ul.appendChild (x)")
                                  ))
 
-      (js-statement (js-defvar "form") "_elem")
-      (js-statement (js-defvar "nameinput") )
-      (js-statement (js-defvar "mailinput") )
-      (js-statement (js-defvar "inputtext") )
+      (js-statement (js-defvar "form_elem"))
+      (js-statement (js-defvar "nameinput"))
+      (js-statement (js-defvar "mailinput"))
+      (js-statement (js-defvar "inputtext"))
       (js-with "env"
                (js-statement "nameinput = input ({type: \"text\", size: \"20\"}) (d)")
                (js-statement "nameinput.name = \"nameinput\"")
@@ -202,7 +202,7 @@
                       (js-statement (js-defvar "lis") "= d.cookie.split (/;\\s*/)")
                       ;; ,(js-statement "// out (d.createTextNode (d.cookie))")
                       (js-for-each (js-statement* (js-defvar "i") " " "in lis")
-                                   (js-statement (js-defvar "key") "_value = lis[i].split (/=/)")
+                                   (js-statement (js-defvar "key_value") " = lis[i].split (/=/)")
                                    (js-statement (js-defvar "key") "= key_value[0]")
                                    (js-statement (js-defvar "val") "= key_value[1]")
 
@@ -289,10 +289,10 @@
 
       ,(js-defun
       "sendtext" "(d, inputtext, ul, name, mail, text)"
-      (js-statement (js-defvar "chat") "_entry = make_dom_element (\"chat-entry\")")
+      (js-statement (js-defvar "chat_entry") "= make_dom_element (\"chat-entry\")")
       (js-statement (js-defvar "from") "= make_dom_element (\"from\")")
-      (js-statement (js-defvar "user") "_by_nickname = make_dom_element (\"user-by-nickname\")")
-      (js-statement (js-defvar "avatar") "_img = make_dom_element (\"avatar-image\")")
+      (js-statement (js-defvar "user_by_nickname") " = make_dom_element (\"user-by-nickname\")")
+      (js-statement (js-defvar "avatar_img") " = make_dom_element (\"avatar-image\")")
       (js-statement (js-defvar "string") "= make_dom_element (\"string\")")
       (js-statement (js-defvar "content") "= make_dom_element (\"content\")")
 
@@ -300,7 +300,7 @@
              (js-statement "name = \"Anonymous\"")
              )
 
-      (js-statement (js-defvar "avatar") "_elem = null")
+      (js-statement (js-defvar "avatar_elem") " = null")
       (js-if "mail && mail.length > 0"
              (js-statement "avatar_elem = avatar_img (string (\"http://www.gravatar.com/avatar/\""
                            "+ hex_md5 (mail.toLowerCase ()) + \"?s=40\"))")
