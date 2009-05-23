@@ -26,8 +26,10 @@
   (syntax-rules ()
     ((_ ((var init) ...) () body ...)
      (let ((var (string-append "$" (symbol->string (gensym)))) ...)
-       (list (js-statement (js-defvar var) init) ...
+       (list (js-statement (js-defvar var) (if (null? init) () (cons "=" init))) ...
              body ...)))
+    ((_ ((var) rest ...) () body ...)
+     (js-let-helper ((var ()) rest ...) () body ...))
     ((_ (part ...) (var rest ...) body ...)
      (js-let-helper (part ... var) (rest ...) body ...))
     ))
@@ -35,7 +37,8 @@
 (define (main args)
   (write-tree
    `(,(cgi-header :content-type "text/javascript")
-     (,(js-statement
+     ,(map (lambda (x) (list x "\n"))
+       `(,(js-statement
         "D = "
         (js-anon-fun
            "(output)"
@@ -47,39 +50,40 @@
         "D.prototype.chat_entry = "
         (js-anon-fun
           "()"
-          (js-statement (js-defvar "img") "= make_dom_element (\"img\", \"src\")")
-          (js-statement (js-defvar "p") "= make_dom_element (\"p\")")
-          (js-statement (js-defvar "div") "= make_dom_element (\"div\")")
-          (js-statement (js-defvar "br") "= make_dom_element (\"br\")")
-          (js-statement (js-defvar "table") "= make_dom_element (\"table\")")
-          (js-statement (js-defvar "td") "= make_dom_element (\"td\")")
-          (js-statement (js-defvar "tr") "= make_dom_element (\"tr\")")
-          (js-statement (js-defvar "span") "= make_dom_element (\"span\")")
 
-          (js-statement (js-defvar "imgsrc") "= this.state.avatar_image")
+          (js-let
+           ((img "make_dom_element (\"img\", \"src\")")
+            (p "make_dom_element (\"p\")")
+            (div "make_dom_element (\"div\")")
+            (br "make_dom_element (\"br\")")
+            (table "make_dom_element (\"table\")")
+            (td "make_dom_element (\"td\")")
+            (tr "make_dom_element (\"tr\")")
+            (span "make_dom_element (\"span\")")
+            (imgsrc "this.state.avatar_image")
+            (lines "this.state.content.split (/\\r*\\n/)")
+            (lines_with_br (list "[" lines "[0]]")))
 
-          (js-statement (js-defvar "lines") "= this.state.content.split (/\\r*\\n/)")
-          (js-statement (js-defvar "lines_with_br") " = [lines[0]]")
           (js-for
            (js-statement (js-defvar "i") "= 1")
-           (js-statement "i < lines.length")
+           (js-statement "i <" lines ".length")
            (js-statement* "i ++")
 
-           (js-statement "lines_with_br.push (br ())")
-           (js-statement "lines_with_br.push (lines[i])")
+           (js-statement "lines_with_br.push (" br "())")
+           (js-statement "lines_with_br.push (" lines "[i])")
            )
 
           (js-statement
-            (js-defvar "e") "= (table ({style: \"width: 80%\"},"
-            "tr ({style: \"background-color: rgb(200, 200, 255)\"},"
-            "td ({width: \"50\", height: \"40\", style: \"vertical-align: top\"},"
-            "imgsrc ? img ({src: imgsrc}) : null),"
-            "td.apply (this, [{style: \"vertical-align: top;\"},"
-            "span ({style: \"font-weight: bold;\"}, this.state.nickname),"
-            "br ()].concat (lines_with_br))"
+            (js-defvar "e") "= (" table "({style: \"width: 80%\"},"
+            tr "({style: \"background-color: rgb(200, 200, 255)\"},"
+            td "({width: \"50\", height: \"40\", style: \"vertical-align: top\"},"
+            imgsrc "?" img "({src:" imgsrc "}) : null),"
+            td ".apply (this, [{style: \"vertical-align: top;\"},"
+            span "({style: \"font-weight: bold;\"}, this.state.nickname),"
+            br "()].concat (" lines_with_br "))"
             "))) (document)")
           (js-statement "this.out (e)")
-          ))
+          )))
 
       ,(js-statement
         "D.prototype.from = "
@@ -256,7 +260,7 @@
                ;; (let ((var "text"))
                ;;   (js-statement (js-defvar var) "= inputtext.value")
                (js-let
-                ((text "= inputtext.value"))
+                ((text "inputtext.value"))
                  (js-statement "inputtext.value = \"\"")
                  (js-statement "sendtext (d, inputtext, ul, nameinput.value, mailinput.value, " text ")")
                  (js-statement "return false")
@@ -381,3 +385,4 @@
       )
      )
    ))
+)
