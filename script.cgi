@@ -125,16 +125,17 @@
         (js-anon-fun
          "(elem)"
          (js-if "elem.nodeType == 1"
-                (js-statement (js-defvar "func") "= elem.tagName")
-                (js-statement "func = func.replace (/-/g, \"_\")")
+                (js-let ((func "elem.tagName"))
+                (js-statement func "=" func ".replace (/-/g, \"_\")")
 
-                (js-statement (js-defvar "args") "= []")
+                (js-let ((args "[]"))
+                ;; (js-statement (js-defvar "args") "= []")
                 (js-for (js-statement (js-defvar "e") "= elem.firstChild") (js-statement "e") (js-statement* "e = e.nextSibling")
-                        (js-statement "args.push (this.evaluate (e))")
+                        (js-statement args ".push (this.evaluate (e))")
                         )
 
-                (js-statement "return this[func].apply (this, args)")
-                )
+                (js-statement "return this[" func "].apply (this," args ")")
+                )))
          (js-else
           (js-statement "return elem")
           )
@@ -143,14 +144,15 @@
       ;; "// http://james.padolsey.com/javascript/get-document-height-cross-browser/"
       ,(js-defun
         "getDocHeight" "()"
-        (js-statement (js-defvar "D") "= document")
+        (js-let ((D "document"))
+        ;; (js-statement (js-defvar "D") "= document")
         (js-statement
          "return Math.max("
-         "Math.max(D.body.scrollHeight, D.documentElement.scrollHeight),"
-         "Math.max(D.body.offsetHeight, D.documentElement.offsetHeight),"
-         "Math.max(D.body.clientHeight, D.documentElement.clientHeight)"
+         "Math.max(" D ".body.scrollHeight," D ".documentElement.scrollHeight),"
+         "Math.max(" D ".body.offsetHeight," D ".documentElement.offsetHeight),"
+         "Math.max(" D ".body.clientHeight," D ".documentElement.clientHeight)"
          ")")
-        )
+        ))
 
       ,(js-defun
         "ewrap" "(e)"
@@ -164,6 +166,8 @@
 
       (js-statement (js-defvar "tags") "= [\"h1\", \"h2\", \"ul\", \"li\", \"form\", \"input\", \"textarea\", \"div\", \"p\", \"br\", \"a\"]")
       (js-statement (js-defvar "env") "= {}")
+
+
       (js-for-each (js-statement* (js-defvar "i") " " "in tags")
                    (js-statement (js-defvar "t") " " "= tags[i]")
                    (js-statement "env[t] = make_dom_element (t)")
