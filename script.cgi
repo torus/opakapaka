@@ -52,7 +52,7 @@
           "()"
 
           (js-let
-           ((img "make_dom_element (\"img\", \"src\")")
+           ((img "make_dom_element (\"img\")")
             (p "make_dom_element (\"p\")")
             (div "make_dom_element (\"div\")")
             (br "make_dom_element (\"br\")")
@@ -74,15 +74,15 @@
            )
 
           (js-statement
-            (js-defvar "e") "= (" table "({style: \"width: 80%\"},"
-            tr "({style: \"background-color: rgb(200, 200, 255)\"},"
-            td "({width: \"50\", height: \"40\", style: \"vertical-align: top\"},"
-            imgsrc "?" img "({src:" imgsrc "}) : null),"
-            td ".apply (this, [{style: \"vertical-align: top;\"},"
-            span "({style: \"font-weight: bold;\"}, this.state.nickname),"
-            br "()].concat (" lines_with_br "))"
-            "))) (document)")
-          (js-statement "this.out (e)")
+           (js-let ((e `("(" ,table "({style: \"width: 80%\"},"
+                         ,tr "({style: \"background-color: rgb(200, 200, 255)\"},"
+                         ,td "({width: \"50\", height: \"40\", style: \"vertical-align: top\"},"
+                         ,imgsrc "?" ,img "({src:" ,imgsrc "}) : null),"
+                         ,td ".apply (this, [{style: \"vertical-align: top;\"},"
+                         ,span "({style: \"font-weight: bold;\"}, this.state.nickname),"
+                         ,br "()].concat (" ,lines_with_br "))"
+                         "))) (document)")))
+                   (js-statement "this.out (" e" )")))
           )))
 
       ,(js-statement
