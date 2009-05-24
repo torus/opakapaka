@@ -160,159 +160,159 @@
         )
 
       ,(js-defun
-      "initialize" "()"
-      (js-statement (js-defvar "d") "= document")
-      (js-statement (js-defvar "b") "= d.body")
+        "initialize" "()"
+        (js-statement (js-defvar "d") "= document")
+        (js-statement (js-defvar "b") "= d.body")
 
-      (js-statement (js-defvar "tags") "= [\"h1\", \"h2\", \"ul\", \"li\", \"form\", \"input\", \"textarea\", \"div\", \"p\", \"br\", \"a\"]")
-      (js-statement (js-defvar "env") "= {}")
+        (js-statement (js-defvar "tags") "= [\"h1\", \"h2\", \"ul\", \"li\", \"form\", \"input\", \"textarea\", \"div\", \"p\", \"br\", \"a\"]")
+        (js-statement (js-defvar "env") "= {}")
 
 
-      (js-for-each (js-statement* (js-defvar "i") " " "in tags")
-                   (js-statement (js-defvar "t") " " "= tags[i]")
-                   (js-statement "env[t] = make_dom_element (t)")
-                   )
+        (js-for-each (js-statement* (js-defvar "i") " " "in tags")
+                     (js-statement (js-defvar "t") " " "= tags[i]")
+                     (js-statement "env[t] = make_dom_element (t)")
+                     )
 
-      (js-with "env"
-               (js-statement (js-defvar "head") "= (h1 (\"Web chat\")) (d)")
-               (js-statement "b.appendChild (head)")
-               )
-
-      (js-statement (js-defvar "ul") "= d.createElement (\"ul\")")
-      (js-statement "ul.style.padding = \"0px\"")
-      (js-statement "b.appendChild (ul)")
-
-      (js-statement (js-defvar "out") "= "
-                    (js-anon-fun "(t)"
-                                 (js-statement (js-defvar "x") "= d.createElement (\"li\")")
-                                 (js-statement "x.style.listStyle = \"none\"")
-                                 (js-statement "x.style.clear = \"both\"")
-                                 (js-statement "x.appendChild (t)")
-                                 (js-statement "ul.appendChild (x)")
-                                 ))
-
-      (js-statement (js-defvar "form_elem"))
-      (js-statement (js-defvar "nameinput"))
-      (js-statement (js-defvar "mailinput"))
-      (js-statement (js-defvar "inputtext"))
-      (js-with "env"
-               (js-statement "nameinput = input ({type: \"text\", size: \"20\"}) (d)")
-               (js-statement "nameinput.name = \"nameinput\"")
-               (js-statement "mailinput = input ({type: \"text\", size: \"50\"}) (d)")
-               (js-statement "mailinput.name = \"mailinput\"")
-               (js-statement "inputtext = textarea ({style: \"width:80%; height:10ex;\"}) (d)")
-               (js-statement "form_elem = (form (\"Nickname: \", ewrap (nameinput),"
-                             "\"Gravatar e-mail: \", ewrap (mailinput),"
-                             "a ({href: \"http://gravatar.com\"}, \"What's this?\"),"
-                             "br (), ewrap (inputtext),"
-                             "p (\"[TIPS] Press Shift+Enter to add a new line.  \","
-                             "a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\"))"
-                             ")) (d)")
-
-               (js-statement (js-defvar "cookied_inputs") "= {nameinput: nameinput, mailinput: mailinput}")
-               (js-for-each (js-statement* (js-defvar "i") " " "in cookied_inputs")
-                            (js-statement (js-defvar "e") "= cookied_inputs[i]")
-                            (js-statement
-                             "e.onchange = "
-                             (js-anon-fun
-                              "()"
-                              (js-statement (js-defvar "exp") "= new Date()")
-                              (js-statement "exp.setTime (new Date ().getTime () + 1000 * 60 * 60 * 24 * 14)") ; // 14 days
-                              (js-statement "d.cookie = this.name + \"=\"+ escape (this.value) + \";expires=\"+ exp.toGMTString ()")
-                              ))
-                            )
-
-               (js-if "d.cookie"
-                      (js-statement (js-defvar "lis") "= d.cookie.split (/;\\s*/)")
-                      ;; ,(js-statement "// out (d.createTextNode (d.cookie))")
-                      (js-for-each (js-statement* (js-defvar "i") " " "in lis")
-                                   (js-statement (js-defvar "key_value") " = lis[i].split (/=/)")
-                                   (js-statement (js-defvar "key") "= key_value[0]")
-                                   (js-statement (js-defvar "val") "= key_value[1]")
-
-                                   (js-statement (js-defvar "e") "= cookied_inputs[key]")
-                                   (js-if "e"
-                                          (js-statement "e.value = unescape (val)")
-                                          )
-                                   )
-                      )
-               )
-
-      ;; ,(js-statement "// alert ([form_elem, nameinput, mailinput, inputtext].join (\", \"))")
-
-      (js-statement "form_elem.onsubmit = " (js-anon-fun "()" (js-statement "return false")))
-      (js-statement "b.appendChild (form_elem)")
-
-      (js-statement (js-defvar "stat") "= d.createElement (\"div\")")
-      (js-statement (js-defvar "statcont") "= d.createElement (\"p\")")
-      (js-statement (js-defvar "stattext") "= d.createTextNode (\"initiazelid.  waiting for data...\")")
-      (js-statement "statcont.appendChild (stattext)")
-      (js-statement "stat.appendChild (statcont)")
-      (js-statement "b.appendChild (stat)")
-      (js-statement "stat.style.backgroundColor = \"#cccccc\"")
-
-      (js-statement (js-defvar "updatestat") "= "
-                    (js-anon-fun "(text)"
-                                 (js-statement "stattext.nodeValue = text")
-                                 ))
-
-      (js-statement
-       "window.onkeypress = "
-       (js-anon-fun
-        "(ev)"
-        (js-if "ev.keyCode == 13 && !ev.shiftKey"
-               ;; (let ((var "text"))
-               ;;   (js-statement (js-defvar var) "= inputtext.value")
-               (js-let
-                ((text "inputtext.value"))
-                 (js-statement "inputtext.value = \"\"")
-                 (js-statement "sendtext (d, inputtext, ul, nameinput.value, mailinput.value, " text ")")
-                 (js-statement "return false")
+        (js-with "env"
+                 (js-statement (js-defvar "head") "= (h1 (\"Web chat\")) (d)")
+                 (js-statement "b.appendChild (head)")
                  )
-               )))
 
-      (js-statement (js-defvar "initial") "= true")
+        (js-statement (js-defvar "ul") "= d.createElement (\"ul\")")
+        (js-statement "ul.style.padding = \"0px\"")
+        (js-statement "b.appendChild (ul)")
 
-      (js-statement (js-defvar "pos") "= 0")
-      (js-defun "get_log" "()"
-                (js-statement (js-defvar "client") "= new XMLHttpRequest()")
-                (js-statement "client.open(\"GET\", \"./pull.cgi?p=\" + pos, true)")
-                (js-statement "client.send(null)")
-                (js-statement
-                 "client.onreadystatechange = "
-                 (js-anon-fun "()"
-                              (js-if "this.readyState == 4"
-                                     (js-if "this.status == 200"
-                                            (js-statement (js-defvar "doc") "= this.responseXML")
-                                            (js-statement "pos = doc.getElementsByTagName (\"pos\")[0].firstChild.data")
+        (js-statement (js-defvar "out") "= "
+                      (js-anon-fun "(t)"
+                                   (js-statement (js-defvar "x") "= d.createElement (\"li\")")
+                                   (js-statement "x.style.listStyle = \"none\"")
+                                   (js-statement "x.style.clear = \"both\"")
+                                   (js-statement "x.appendChild (t)")
+                                   (js-statement "ul.appendChild (x)")
+                                   ))
 
-                                            (js-for
-                                             (js-statement (js-defvar "e") "= doc.getElementsByTagName (\"content\")[0].firstChild")
-                                             (js-statement "e")
-                                             (js-statement* "e = e.nextSibling")
+        (js-statement (js-defvar "form_elem"))
+        (js-statement (js-defvar "nameinput"))
+        (js-statement (js-defvar "mailinput"))
+        (js-statement (js-defvar "inputtext"))
+        (js-with "env"
+                 (js-statement "nameinput = input ({type: \"text\", size: \"20\"}) (d)")
+                 (js-statement "nameinput.name = \"nameinput\"")
+                 (js-statement "mailinput = input ({type: \"text\", size: \"50\"}) (d)")
+                 (js-statement "mailinput.name = \"mailinput\"")
+                 (js-statement "inputtext = textarea ({style: \"width:80%; height:10ex;\"}) (d)")
+                 (js-statement "form_elem = (form (\"Nickname: \", ewrap (nameinput),"
+                               "\"Gravatar e-mail: \", ewrap (mailinput),"
+                               "a ({href: \"http://gravatar.com\"}, \"What's this?\"),"
+                               "br (), ewrap (inputtext),"
+                               "p (\"[TIPS] Press Shift+Enter to add a new line.  \","
+                               "a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\"))"
+                               ")) (d)")
 
-                                             (js-statement (js-defvar "x") "= new D (out)")
-                                             (js-statement "x.evaluate (e)")
-                                             )
+                 (js-statement (js-defvar "cookied_inputs") "= {nameinput: nameinput, mailinput: mailinput}")
+                 (js-for-each (js-statement* (js-defvar "i") " " "in cookied_inputs")
+                              (js-statement (js-defvar "e") "= cookied_inputs[i]")
+                              (js-statement
+                               "e.onchange = "
+                               (js-anon-fun
+                                "()"
+                                (js-statement (js-defvar "exp") "= new Date()")
+                                (js-statement "exp.setTime (new Date ().getTime () + 1000 * 60 * 60 * 24 * 14)") ; // 14 days
+                                (js-statement "d.cookie = this.name + \"=\"+ escape (this.value) + \";expires=\"+ exp.toGMTString ()")
+                                ))
+                              )
 
-                                            (js-statement (js-defvar "scrollY") "= window.pageYOffset || document.body.scrollTop")
-                                            (js-statement (js-defvar "threshold") "= getDocHeight () - window.innerHeight * 1.5")
-                                            (js-statement "updatestat (\"new pos = \" + pos + \" scrollY = \" + scrollY + \" threshold = \" + threshold)")
-                                            (js-if "initial || scrollY > threshold"
-                                                   (js-statement "initial = false")
-                                                   (js-statement "window.scrollTo (0, getDocHeight () - window.innerHeight)")
-                                                   )
+                 (js-if "d.cookie"
+                        (js-statement (js-defvar "lis") "= d.cookie.split (/;\\s*/)")
+                        ;; ,(js-statement "// out (d.createTextNode (d.cookie))")
+                        (js-for-each (js-statement* (js-defvar "i") " " "in lis")
+                                     (js-statement (js-defvar "key_value") " = lis[i].split (/=/)")
+                                     (js-statement (js-defvar "key") "= key_value[0]")
+                                     (js-statement (js-defvar "val") "= key_value[1]")
 
-                                            (js-statement "setTimeout (get_log, 100)")
-                                            ) (js-else
-                                               (js-statement "updatestat (\"status = \" + this.status)")
-                                               (js-statement "setTimeout (get_log, 3000)")
+                                     (js-statement (js-defvar "e") "= cookied_inputs[key]")
+                                     (js-if "e"
+                                            (js-statement "e.value = unescape (val)")
+                                            )
+                                     )
+                        )
+                 )
+
+        ;; ,(js-statement "// alert ([form_elem, nameinput, mailinput, inputtext].join (\", \"))")
+
+        (js-statement "form_elem.onsubmit = " (js-anon-fun "()" (js-statement "return false")))
+        (js-statement "b.appendChild (form_elem)")
+
+        (js-statement (js-defvar "stat") "= d.createElement (\"div\")")
+        (js-statement (js-defvar "statcont") "= d.createElement (\"p\")")
+        (js-statement (js-defvar "stattext") "= d.createTextNode (\"initiazelid.  waiting for data...\")")
+        (js-statement "statcont.appendChild (stattext)")
+        (js-statement "stat.appendChild (statcont)")
+        (js-statement "b.appendChild (stat)")
+        (js-statement "stat.style.backgroundColor = \"#cccccc\"")
+
+        (js-statement (js-defvar "updatestat") "= "
+                      (js-anon-fun "(text)"
+                                   (js-statement "stattext.nodeValue = text")
+                                   ))
+
+        (js-statement
+         "window.onkeypress = "
+         (js-anon-fun
+          "(ev)"
+          (js-if "ev.keyCode == 13 && !ev.shiftKey"
+                 ;; (let ((var "text"))
+                 ;;   (js-statement (js-defvar var) "= inputtext.value")
+                 (js-let
+                  ((text "inputtext.value"))
+                  (js-statement "inputtext.value = \"\"")
+                  (js-statement "sendtext (d, inputtext, ul, nameinput.value, mailinput.value, " text ")")
+                  (js-statement "return false")
+                  )
+                 )))
+
+        (js-statement (js-defvar "initial") "= true")
+
+        (js-statement (js-defvar "pos") "= 0")
+        (js-defun "get_log" "()"
+                  (js-statement (js-defvar "client") "= new XMLHttpRequest()")
+                  (js-statement "client.open(\"GET\", \"./pull.cgi?p=\" + pos, true)")
+                  (js-statement "client.send(null)")
+                  (js-statement
+                   "client.onreadystatechange = "
+                   (js-anon-fun "()"
+                                (js-if "this.readyState == 4"
+                                       (js-if "this.status == 200"
+                                              (js-statement (js-defvar "doc") "= this.responseXML")
+                                              (js-statement "pos = doc.getElementsByTagName (\"pos\")[0].firstChild.data")
+
+                                              (js-for
+                                               (js-statement (js-defvar "e") "= doc.getElementsByTagName (\"content\")[0].firstChild")
+                                               (js-statement "e")
+                                               (js-statement* "e = e.nextSibling")
+
+                                               (js-statement (js-defvar "x") "= new D (out)")
+                                               (js-statement "x.evaluate (e)")
                                                )
-                                              )
-                              ))
-                )
-      (js-statement "get_log ()")
-      )
+
+                                              (js-statement (js-defvar "scrollY") "= window.pageYOffset || document.body.scrollTop")
+                                              (js-statement (js-defvar "threshold") "= getDocHeight () - window.innerHeight * 1.5")
+                                              (js-statement "updatestat (\"new pos = \" + pos + \" scrollY = \" + scrollY + \" threshold = \" + threshold)")
+                                              (js-if "initial || scrollY > threshold"
+                                                     (js-statement "initial = false")
+                                                     (js-statement "window.scrollTo (0, getDocHeight () - window.innerHeight)")
+                                                     )
+
+                                              (js-statement "setTimeout (get_log, 100)")
+                                              ) (js-else
+                                                 (js-statement "updatestat (\"status = \" + this.status)")
+                                                 (js-statement "setTimeout (get_log, 3000)")
+                                                 )
+                                                )
+                                ))
+                  )
+        (js-statement "get_log ()")
+        )
 
       ,(js-defun
       "sendtext" "(d, inputtext, ul, name, mail, text)"
