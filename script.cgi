@@ -203,9 +203,9 @@
                                "a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\"))"
                                ")) (" d ")")
 
-                 (js-statement (js-defvar "cookied_inputs") "= {nameinput: " nameinput ", mailinput: " mailinput "}")
-                 (js-for-each (js-statement* (js-defvar "i") " " "in cookied_inputs")
-                              (js-statement (js-defvar "e") "= cookied_inputs[i]")
+                 (js-let ((cookied_inputs `("{nameinput: " ,nameinput ", mailinput: " ,mailinput "}")))
+                 (js-for-each (js-statement* (js-defvar "i") " " "in " cookied_inputs "")
+                              (js-statement (js-defvar "e") "= " cookied_inputs "[i]")
                               (js-statement
                                "e.onchange = "
                                (js-anon-fun
@@ -223,13 +223,13 @@
                                               (key `(,key_value "[0]"))
                                               (val `(,key_value "[1]")))
 
-                                     (js-let ((e `("cookied_inputs[" ,key "]")))
+                                     (js-let ((e `("" ,cookied_inputs "[" ,key "]")))
                                      (js-if e
                                             (js-statement e ".value = unescape (" val ")")
                                             )
                                      )))
                         )
-                 )
+                 ))
 
         ;; ,(js-statement "// alert ([form_elem, nameinput, mailinput, inputtext].join (\", \"))")
 
