@@ -242,10 +242,13 @@
         (js-statement b ".appendChild (" stat ")")
         (js-statement "" stat ".style.backgroundColor = \"#cccccc\"")
 
-        (js-statement (js-defvar "updatestat") "= "
-                      (js-anon-fun "(text)"
+        (js-let ((updatestat (js-anon-fun "(text)"
                                    (js-statement "" stattext ".nodeValue = text")
-                                   ))
+                                   )))
+        ;; (js-statement (js-defvar "updatestat") "= "
+        ;;               (js-anon-fun "(text)"
+        ;;                            (js-statement "" stattext ".nodeValue = text")
+        ;;                            ))
 
         (js-statement
          "window.onkeypress = "
@@ -271,46 +274,49 @@
                    (js-anon-fun "()"
                                 (js-if "this.readyState == 4"
                                        (js-if "this.status == 200"
-                                              (js-statement (js-defvar "doc") "= this.responseXML")
-                                              (js-statement "" pos " = doc.getElementsByTagName (\"pos\")[0].firstChild.data")
+                                              (js-let ((doc "this.responseXML"))
+                                              (js-statement "" pos " = " doc ".getElementsByTagName (\"pos\")[0].firstChild.data")
 
                                               (js-for
-                                               (js-statement (js-defvar "e") "= doc.getElementsByTagName (\"content\")[0].firstChild")
+                                               (js-statement (js-defvar "e") "= " doc ".getElementsByTagName (\"content\")[0].firstChild")
                                                (js-statement "e")
                                                (js-statement* "e = e.nextSibling")
 
-                                               (js-statement (js-defvar "x") "= new D (" out ")")
-                                               (js-statement "x.evaluate (e)")
-                                               )
+                                               (js-let ((x `("new D (" ,out ")")))
+                                               ;; (js-statement (js-defvar "x") "= new D (" out ")")
+                                                       (js-statement x ".evaluate (e)")
+                                               ))
 
-                                              (js-statement (js-defvar "scrollY") "= window.pageYOffset || document.body.scrollTop")
-                                              (js-statement (js-defvar "threshold") "= getDocHeight () - window.innerHeight * 1.5")
-                                              (js-statement "updatestat (\"new pos = \" + " pos " + \" scrollY = \" + scrollY + \" threshold = \" + threshold)")
-                                              (js-if `(,initial " || scrollY > threshold")
+                                              (js-let ((scrollY "window.pageYOffset || document.body.scrollTop")
+                                                       (threshold "getDocHeight () - window.innerHeight * 1.5"))
+                                              ;; (js-statement (js-defvar "scrollY") "= window.pageYOffset || document.body.scrollTop")
+                                              ;; (js-statement (js-defvar "threshold") "= getDocHeight () - window.innerHeight * 1.5")
+                                              (js-statement "" updatestat " (\"new pos = \" + " pos " + \" scrollY = \" + " scrollY " + \" threshold = \" + " threshold ")")
+                                              (js-if `(,initial " || " scrollY " > " threshold "")
                                                      (js-statement "" initial " = false")
                                                      (js-statement "window.scrollTo (0, getDocHeight () - window.innerHeight)")
                                                      )
 
                                               (js-statement "setTimeout (get_log, 100)")
-                                              ) (js-else
-                                                 (js-statement "updatestat (\"status = \" + this.status)")
+                                              ))) (js-else
+                                                 (js-statement "" updatestat " (\"status = \" + this.status)")
                                                  (js-statement "setTimeout (get_log, 3000)")
                                                  )
                                                 )
                                 ))
                   )
         (js-statement "get_log ()")
-        ))))))
+        )))))))
         )
 
       ,(js-defun
       "sendtext" "(d, inputtext, ul, name, mail, text)"
-      (js-statement (js-defvar "chat_entry") "= make_dom_element (\"chat-entry\")")
-      (js-statement (js-defvar "from") "= make_dom_element (\"from\")")
-      (js-statement (js-defvar "user_by_nickname") " = make_dom_element (\"user-by-nickname\")")
-      (js-statement (js-defvar "avatar_img") " = make_dom_element (\"avatar-image\")")
-      (js-statement (js-defvar "string") "= make_dom_element (\"string\")")
-      (js-statement (js-defvar "content") "= make_dom_element (\"content\")")
+      (js-let ((chat_entry "make_dom_element (\"chat-entry\")")
+               (from "make_dom_element (\"from\")")
+               (user_by_nickname "make_dom_element (\"user-by-nickname\")")
+               (avatar_img "make_dom_element (\"avatar-image\")")
+               (string "make_dom_element (\"string\")")
+               (content "make_dom_element (\"content\")"))
 
       (js-if "!(name && name.length > 0)"
              (js-statement "name = \"Anonymous\"")
@@ -318,14 +324,14 @@
 
       (js-statement (js-defvar "avatar_elem") " = null")
       (js-if "mail && mail.length > 0"
-             (js-statement "avatar_elem = avatar_img (string (\"http://www.gravatar.com/avatar/\""
+             (js-statement "avatar_elem = " avatar_img " (" string " (\"http://www.gravatar.com/avatar/\""
                            "+ hex_md5 (mail.toLowerCase ()) + \"?s=40\"))")
              )
 
       (js-statement (js-defvar "doc") "= document.implementation.createDocument (\"\", \"\", null)")
-      (js-statement (js-defvar "elem") "= (chat_entry (from (user_by_nickname (string (name)),"
+      (js-statement (js-defvar "elem") "= (" chat_entry " (" from " (" user_by_nickname " (" string " (name)),"
                      "avatar_elem),"
-                     "content (string (text)))) (doc)")
+                     "" content " (" string " (text)))) (doc)")
 
       (js-statement "doc.appendChild (elem)")
 
@@ -333,7 +339,7 @@
       (js-statement "client.open(\"POST\", \"./push.cgi\")")
       (js-statement "client.setRequestHeader(\"Content-Type\", \"text/xml;charset=UTF-8\")")
       (js-statement "client.send(doc)")
-      )
+      ))
 
       ,(js-defun
         "make_dom_element" "(tag)"
