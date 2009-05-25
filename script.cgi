@@ -210,11 +210,11 @@
                                "e.onchange = "
                                (js-anon-fun
                                 "()"
-                                (js-statement (js-defvar "exp") "= new Date()")
-                                (js-statement "exp.setTime (new Date ().getTime () + 1000 * 60 * 60 * 24 * 14)") ; // 14 days
-                                (js-statement d ".cookie = this.name + \"=\"+ escape (this.value) + \";expires=\"+ exp.toGMTString ()")
+                                (js-let ((exp "new Date()"))
+                                (js-statement exp ".setTime (new Date ().getTime () + 1000 * 60 * 60 * 24 * 14)") ; // 14 days
+                                (js-statement d ".cookie = this.name + \"=\"+ escape (this.value) + \";expires=\"+" exp ".toGMTString ()")
                                 ))
-                              )
+                              ))
 
                  (js-if `(,d ".cookie")
                         (js-statement (js-defvar "lis") "=" d ".cookie.split (/;\\s*/)")
