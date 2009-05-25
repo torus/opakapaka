@@ -350,25 +350,26 @@
                                (len "arguments.length"))
 
                       (js-statement "return " (js-anon-fun "(doc)"
-                      (js-statement (js-defvar "e") "= doc.createElement (tag)")
+                      (js-let ((e "doc.createElement (tag)"))
+                      ;; (js-statement (js-defvar "e") "= doc.createElement (tag)")
                       (js-for (js-statement (js-defvar "i") "= 0") (js-statement "i < " len "") (js-statement* "i ++")
                               (js-statement (js-defvar "c") "= " args "[i]")
                               (js-if "c == null" (js-statement "continue"))
                               (js-if "typeof (c) == \"function\""
-                                     (js-statement "e.appendChild (" args "[i](doc))")
+                                     (js-statement "" e ".appendChild (" args "[i](doc))")
                                      )
                               (js-else-if "typeof (c) == \"object\""
                                           (js-for-each (js-statement* (js-defvar "j") " " "in c")
-                                                       (js-statement "e.setAttribute (j, c[j])")
+                                                       (js-statement "" e ".setAttribute (j, c[j])")
                                                        )
                                           )
                               (js-else
                                (js-statement ""(js-defvar "t") "= doc.createTextNode (c)")
-                               (js-statement "e.appendChild (t)")
+                               (js-statement "" e ".appendChild (t)")
                                )
                               )
-                      (js-statement "return e")
-                      )
+                      (js-statement "return " e "")
+                      ))
                       )))
                        ))
         (js-statement "return" " " dest)
