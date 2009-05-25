@@ -226,17 +226,16 @@
 
                  (js-if `(,d ".cookie")
                         (js-statement (js-defvar "lis") "=" d ".cookie.split (/;\\s*/)")
-                        ;; ,(js-statement "// out (d.createTextNode (d.cookie))")
                         (js-for-each (js-statement* (js-defvar "i") " " "in lis")
-                                     (js-statement (js-defvar "key_value") " = lis[i].split (/=/)")
-                                     (js-statement (js-defvar "key") "= key_value[0]")
-                                     (js-statement (js-defvar "val") "= key_value[1]")
+                                     (js-let ((key_value "lis[i].split (/=/)")
+                                              (key `(,key_value "[0]"))
+                                              (val `(,key_value "[1]")))
 
-                                     (js-statement (js-defvar "e") "= cookied_inputs[key]")
-                                     (js-if "e"
-                                            (js-statement "e.value = unescape (val)")
+                                     (js-let ((e `("cookied_inputs[" ,key "]")))
+                                     (js-if e
+                                            (js-statement e ".value = unescape (" val ")")
                                             )
-                                     )
+                                     )))
                         )
                  )
 
@@ -273,7 +272,6 @@
 
         (js-let ((initial "true")
                  (pos "0"))
-
         (js-defun "get_log" "()"
                   (js-statement (js-defvar "client") "= new XMLHttpRequest()")
                   (js-statement "client.open(\"GET\", \"./pull.cgi?p=\" + " pos ", true)")
