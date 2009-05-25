@@ -185,7 +185,7 @@
 
                 (js-let
                  ((ul `(,d ".createElement (\"ul\")")))
-                 (js-statement "" ul ".style.padding = \"0px\"")
+                 (js-statement  ul ".style.padding = \"0px\"")
                  (js-statement b ".appendChild (" ul ")")
 
                  (js-let
@@ -195,19 +195,19 @@
                                          (js-statement x ".style.listStyle = \"none\"")
                                          (js-statement x ".style.clear = \"both\"")
                                          (js-statement x ".appendChild (t)")
-                                         (js-statement "" ul ".appendChild (" x ")")
+                                         (js-statement  ul ".appendChild (" x ")")
                                          ))))
 
                   (js-let
                    ((form_elem) (nameinput) (mailinput) (inputtext))
                    (js-with
                     env
-                    (js-statement "" nameinput " = input ({type: \"text\", size: \"20\"}) (" d ")")
-                    (js-statement "" nameinput ".name = \"nameinput\"")
-                    (js-statement "" mailinput " = input ({type: \"text\", size: \"50\"}) (" d ")")
-                    (js-statement "" mailinput ".name = \"mailinput\"")
-                    (js-statement "" inputtext " = textarea ({style: \"width:80%; height:10ex;\"}) (" d ")")
-                    (js-statement "" form_elem " = (form (\"Nickname: \", ewrap (" nameinput "),"
+                    (js-statement  nameinput " = input ({type: \"text\", size: \"20\"}) (" d ")")
+                    (js-statement  nameinput ".name = \"nameinput\"")
+                    (js-statement  mailinput " = input ({type: \"text\", size: \"50\"}) (" d ")")
+                    (js-statement  mailinput ".name = \"mailinput\"")
+                    (js-statement  inputtext " = textarea ({style: \"width:80%; height:10ex;\"}) (" d ")")
+                    (js-statement  form_elem " = (form (\"Nickname: \", ewrap (" nameinput "),"
                                   "\"Gravatar e-mail: \", ewrap (" mailinput "),"
                                   "a ({href: \"http://gravatar.com\"}, \"What's this?\"),"
                                   "br (), ewrap (" inputtext "),"
@@ -218,7 +218,7 @@
                     (js-let
                      ((cookied_inputs `("{nameinput: " ,nameinput ", mailinput: " ,mailinput "}")))
                      (js-for-each
-                      (js-statement* (js-defvar "i") " " "in " cookied_inputs "")
+                      (js-statement* (js-defvar "i") " " "in " cookied_inputs )
                       (js-statement (js-defvar "e") "= " cookied_inputs "[i]")
                       (js-statement
                        "e.onchange = "
@@ -243,27 +243,27 @@
                           (val `(,key_value "[1]")))
 
                          (js-let
-                          ((e `("" ,cookied_inputs "[" ,key "]")))
+                          ((e `( ,cookied_inputs "[" ,key "]")))
                           (js-if e (js-statement e ".value = unescape (" val ")"))
                           )))
                        ))
                      ))
 
-                   (js-statement "" form_elem ".onsubmit = " (js-anon-fun "()" (js-statement "return false")))
+                   (js-statement  form_elem ".onsubmit = " (js-anon-fun "()" (js-statement "return false")))
                    (js-statement b ".appendChild (" form_elem ")")
 
                    (js-let
                     ((stat `(,d ".createElement (\"div\")"))
                      (statcont `(,d ".createElement (\"p\")"))
                      (stattext `(,d ".createTextNode (\"initiazelid.  waiting for data...\")")))
-                    (js-statement "" statcont ".appendChild (" stattext ")")
-                    (js-statement "" stat ".appendChild (" statcont ")")
+                    (js-statement  statcont ".appendChild (" stattext ")")
+                    (js-statement  stat ".appendChild (" statcont ")")
                     (js-statement b ".appendChild (" stat ")")
-                    (js-statement "" stat ".style.backgroundColor = \"#cccccc\"")
+                    (js-statement  stat ".style.backgroundColor = \"#cccccc\"")
 
                     (js-let
                      ((updatestat (js-anon-fun "(text)"
-                                               (js-statement "" stattext ".nodeValue = text")
+                                               (js-statement  stattext ".nodeValue = text")
                                                )))
 
                      (js-statement
@@ -274,7 +274,7 @@
                         "ev.keyCode == 13 && !ev.shiftKey"
                         (js-let
                          ((text `(,inputtext ".value")))
-                         (js-statement "" inputtext ".value = \"\"")
+                         (js-statement  inputtext ".value = \"\"")
                          (js-statement "sendtext (" d ", " inputtext ", " ul ", " nameinput ".value, " mailinput ".value, " text ")")
                          (js-statement "return false")
                          )
@@ -298,7 +298,7 @@
                            "this.status == 200"
                            (js-let
                             ((doc "this.responseXML"))
-                            (js-statement "" pos " = " doc ".getElementsByTagName (\"pos\")[0].firstChild.data")
+                            (js-statement  pos " = " doc ".getElementsByTagName (\"pos\")[0].firstChild.data")
 
                             (js-for
                              (js-statement (js-defvar "e") "= " doc ".getElementsByTagName (\"content\")[0].firstChild")
@@ -313,17 +313,17 @@
                             (js-let
                              ((scrollY "window.pageYOffset || document.body.scrollTop")
                               (threshold "getDocHeight () - window.innerHeight * 1.5"))
-                             (js-statement "" updatestat " (\"new pos = \" + " pos " + \" scrollY = \" + " scrollY " + \" threshold = \" + " threshold ")")
+                             (js-statement  updatestat " (\"new pos = \" + " pos " + \" scrollY = \" + " scrollY " + \" threshold = \" + " threshold ")")
                              (js-if
-                              `(,initial " || " ,scrollY " > " ,threshold "")
-                              (js-statement "" initial " = false")
+                              `(,initial " || " ,scrollY " > " ,threshold )
+                              (js-statement  initial " = false")
                               (js-statement "window.scrollTo (0, getDocHeight () - window.innerHeight)")
                               )
 
                              (js-statement "setTimeout (get_log, 100)")
                              )))
                           (js-else
-                           (js-statement "" updatestat " (\"status = \" + this.status)")
+                           (js-statement  updatestat " (\"status = \" + this.status)")
                            (js-statement "setTimeout (get_log, 3000)")
                            )
                           )
@@ -349,22 +349,22 @@
                 (js-let
                  ((avatar_elem "null"))
                  (js-if "mail && mail.length > 0"
-                        (js-statement "" avatar_elem " = " avatar_img " (" string " (\"http://www.gravatar.com/avatar/\""
+                        (js-statement  avatar_elem " = " avatar_img " (" string " (\"http://www.gravatar.com/avatar/\""
                                       "+ hex_md5 (mail.toLowerCase ()) + \"?s=40\"))"))
 
                  (js-let
                   ((doc "document.implementation.createDocument (\"\", \"\", null)")
                    (elem `("(" ,chat_entry " (" ,from " (" ,user_by_nickname " (" ,string " (name)),"
-                           "" ,avatar_elem "),"
-                           "" ,content " (" ,string " (text)))) (" ,doc ")")))
+                            ,avatar_elem "),"
+                            ,content " (" ,string " (text)))) (" ,doc ")")))
 
                   (js-statement doc ".appendChild (" elem ")")
 
                   (js-let
                    ((client "new XMLHttpRequest()"))
-                   (js-statement "" client ".open(\"POST\", \"./push.cgi\")")
-                   (js-statement "" client ".setRequestHeader(\"Content-Type\", \"text/xml;charset=UTF-8\")")
-                   (js-statement "" client ".send(" doc ")")
+                   (js-statement  client ".open(\"POST\", \"./push.cgi\")")
+                   (js-statement  client ".setRequestHeader(\"Content-Type\", \"text/xml;charset=UTF-8\")")
+                   (js-statement  client ".send(" doc ")")
                    )))))
 
              ,(js-defun
@@ -372,7 +372,7 @@
                (js-let
                 ((attrs "[]"))
                 (js-for (js-statement (js-defvar "i") "= 1") (js-statement "i < arguments.length") (js-statement* "i ++")
-                        (js-statement "" attrs ".push (arguments[i])"))
+                        (js-statement  attrs ".push (arguments[i])"))
 
                 (js-let
                  ((dest (js-anon-fun
@@ -388,19 +388,19 @@
                             (js-let
                              ((e "doc.createElement (tag)"))
                              (js-for
-                              (js-statement (js-defvar "i") "= 0") (js-statement "i < " len "") (js-statement* "i ++")
+                              (js-statement (js-defvar "i") "= 0") (js-statement "i < " len ) (js-statement* "i ++")
                               (js-statement (js-defvar "c") "= " args "[i]")
                               (js-if "c == null" (js-statement "continue"))
                               (js-if "typeof (c) == \"function\""
-                                     (js-statement "" e ".appendChild (" args "[i](doc))"))
+                                     (js-statement  e ".appendChild (" args "[i](doc))"))
                               (js-else-if "typeof (c) == \"object\""
                                           (js-for-each (js-statement* (js-defvar "j") " " "in c")
-                                                       (js-statement "" e ".setAttribute (j, c[j])")))
+                                                       (js-statement  e ".setAttribute (j, c[j])")))
                               (js-else
-                               (js-statement ""(js-defvar "t") "= doc.createTextNode (c)")
-                               (js-statement "" e ".appendChild (t)"))
+                               (js-statement (js-defvar "t") "= doc.createTextNode (c)")
+                               (js-statement  e ".appendChild (t)"))
                               )
-                             (js-statement "return " e "")
+                             (js-statement "return " e )
                              ))
                            )))
                         ))
