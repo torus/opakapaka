@@ -323,7 +323,6 @@
              )
 
       (js-let ((avatar_elem "null"))
-      ;; (js-statement (js-defvar "avatar_elem") " = null")
       (js-if "mail && mail.length > 0"
              (js-statement "" avatar_elem " = " avatar_img " (" string " (\"http://www.gravatar.com/avatar/\""
                            "+ hex_md5 (mail.toLowerCase ()) + \"?s=40\"))")
@@ -336,17 +335,17 @@
 
       (js-statement "doc.appendChild (elem)")
 
-      (js-statement (js-defvar "client") "= new XMLHttpRequest()")
-      (js-statement "client.open(\"POST\", \"./push.cgi\")")
-      (js-statement "client.setRequestHeader(\"Content-Type\", \"text/xml;charset=UTF-8\")")
-      (js-statement "client.send(doc)")
-      )))
+      (js-let ((client "new XMLHttpRequest()"))
+      (js-statement "" client ".open(\"POST\", \"./push.cgi\")")
+      (js-statement "" client ".setRequestHeader(\"Content-Type\", \"text/xml;charset=UTF-8\")")
+      (js-statement "" client ".send(doc)")
+      ))))
 
       ,(js-defun
         "make_dom_element" "(tag)"
-        (js-statement (js-defvar "attrs") "= []")
+        (js-let ((attrs "[]"))
         (js-for (js-statement (js-defvar "i") "= 1") (js-statement "i < arguments.length") (js-statement* "i ++")
-                (js-statement "attrs.push (arguments[i])")
+                (js-statement "" attrs ".push (arguments[i])")
                 )
 
         (js-statement
@@ -378,7 +377,7 @@
                       )))
 
         (js-statement "return dest")
-      )
+      ))
 
       ;; "// delay to prevent spin gear on Safari"
       ,(js-statement "setTimeout (initialize, 1)")
