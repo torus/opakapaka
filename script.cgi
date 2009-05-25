@@ -292,7 +292,7 @@
                                               ;; (js-statement (js-defvar "scrollY") "= window.pageYOffset || document.body.scrollTop")
                                               ;; (js-statement (js-defvar "threshold") "= getDocHeight () - window.innerHeight * 1.5")
                                               (js-statement "" updatestat " (\"new pos = \" + " pos " + \" scrollY = \" + " scrollY " + \" threshold = \" + " threshold ")")
-                                              (js-if `(,initial " || " scrollY " > " threshold "")
+                                              (js-if `(,initial " || " ,scrollY " > " ,threshold "")
                                                      (js-statement "" initial " = false")
                                                      (js-statement "window.scrollTo (0, getDocHeight () - window.innerHeight)")
                                                      )
@@ -322,15 +322,16 @@
              (js-statement "name = \"Anonymous\"")
              )
 
-      (js-statement (js-defvar "avatar_elem") " = null")
+      (js-let ((avatar_elem "null"))
+      ;; (js-statement (js-defvar "avatar_elem") " = null")
       (js-if "mail && mail.length > 0"
-             (js-statement "avatar_elem = " avatar_img " (" string " (\"http://www.gravatar.com/avatar/\""
+             (js-statement "" avatar_elem " = " avatar_img " (" string " (\"http://www.gravatar.com/avatar/\""
                            "+ hex_md5 (mail.toLowerCase ()) + \"?s=40\"))")
              )
 
       (js-statement (js-defvar "doc") "= document.implementation.createDocument (\"\", \"\", null)")
       (js-statement (js-defvar "elem") "= (" chat_entry " (" from " (" user_by_nickname " (" string " (name)),"
-                     "avatar_elem),"
+                     "" avatar_elem "),"
                      "" content " (" string " (text)))) (doc)")
 
       (js-statement "doc.appendChild (elem)")
@@ -339,7 +340,7 @@
       (js-statement "client.open(\"POST\", \"./push.cgi\")")
       (js-statement "client.setRequestHeader(\"Content-Type\", \"text/xml;charset=UTF-8\")")
       (js-statement "client.send(doc)")
-      ))
+      )))
 
       ,(js-defun
         "make_dom_element" "(tag)"
