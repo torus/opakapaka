@@ -231,22 +231,20 @@
                         ))
                  ))
 
-        ;; ,(js-statement "// alert ([form_elem, nameinput, mailinput, inputtext].join (\", \"))")
-
         (js-statement "" form_elem ".onsubmit = " (js-anon-fun "()" (js-statement "return false")))
         (js-statement b ".appendChild (" form_elem ")")
 
-        (js-statement (js-defvar "stat") "=" d ".createElement (\"div\")")
-        (js-statement (js-defvar "statcont") "=" d ".createElement (\"p\")")
-        (js-statement (js-defvar "stattext") "=" d ".createTextNode (\"initiazelid.  waiting for data...\")")
-        (js-statement "statcont.appendChild (stattext)")
-        (js-statement "stat.appendChild (statcont)")
-        (js-statement b ".appendChild (stat)")
-        (js-statement "stat.style.backgroundColor = \"#cccccc\"")
+        (js-let ((stat `(,d ".createElement (\"div\")"))
+                 (statcont `(,d ".createElement (\"p\")"))
+                 (stattext `(,d ".createTextNode (\"initiazelid.  waiting for data...\")")))
+        (js-statement "" statcont ".appendChild (" stattext ")")
+        (js-statement "" stat ".appendChild (" statcont ")")
+        (js-statement b ".appendChild (" stat ")")
+        (js-statement "" stat ".style.backgroundColor = \"#cccccc\"")
 
         (js-statement (js-defvar "updatestat") "= "
                       (js-anon-fun "(text)"
-                                   (js-statement "stattext.nodeValue = text")
+                                   (js-statement "" stattext ".nodeValue = text")
                                    ))
 
         (js-statement
@@ -302,7 +300,7 @@
                                 ))
                   )
         (js-statement "get_log ()")
-        )))))
+        ))))))
         )
 
       ,(js-defun
