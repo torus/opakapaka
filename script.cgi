@@ -217,9 +217,9 @@
                               ))
 
                  (js-if `(,d ".cookie")
-                        (js-statement (js-defvar "lis") "=" d ".cookie.split (/;\\s*/)")
-                        (js-for-each (js-statement* (js-defvar "i") " " "in lis")
-                                     (js-let ((key_value "lis[i].split (/=/)")
+                        (js-let ((lis `(,d ".cookie.split (/;\\s*/)")))
+                        (js-for-each (js-statement* (js-defvar "i") " " "in " lis)
+                                     (js-let ((key_value `(,lis "[i].split (/=/)"))
                                               (key `(,key_value "[0]"))
                                               (val `(,key_value "[1]")))
 
@@ -228,7 +228,7 @@
                                             (js-statement e ".value = unescape (" val ")")
                                             )
                                      )))
-                        )
+                        ))
                  ))
 
         ;; ,(js-statement "// alert ([form_elem, nameinput, mailinput, inputtext].join (\", \"))")
