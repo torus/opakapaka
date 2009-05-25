@@ -245,10 +245,6 @@
         (js-let ((updatestat (js-anon-fun "(text)"
                                    (js-statement "" stattext ".nodeValue = text")
                                    )))
-        ;; (js-statement (js-defvar "updatestat") "= "
-        ;;               (js-anon-fun "(text)"
-        ;;                            (js-statement "" stattext ".nodeValue = text")
-        ;;                            ))
 
         (js-statement
          "window.onkeypress = "
@@ -351,7 +347,6 @@
 
                       (js-statement "return " (js-anon-fun "(doc)"
                       (js-let ((e "doc.createElement (tag)"))
-                      ;; (js-statement (js-defvar "e") "= doc.createElement (tag)")
                       (js-for (js-statement (js-defvar "i") "= 0") (js-statement "i < " len "") (js-statement* "i ++")
                               (js-statement (js-defvar "c") "= " args "[i]")
                               (js-if "c == null" (js-statement "continue"))
