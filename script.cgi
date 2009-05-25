@@ -14,7 +14,7 @@
 (define (js-else-if condition . body) (list "else" " " (apply js-if condition body)))
 (define (js-else . body) (list "else{" body "}"))
 (define (js-with obj . body) (list "with(" obj "){" body "}"))
-(define (js-defvar v) (list "var" " " v))
+(define (js-defvar . v) (list "var" " " v))
 
 (define-syntax js-let
   (syntax-rules ()
@@ -26,12 +26,30 @@
   (syntax-rules ()
     ((_ ((var init) ...) () body ...)
      (let ((var (string-append "$" (symbol->string (gensym)))) ...)
-       (list (js-statement (js-defvar var) (if (null? init) () (cons "=" init))) ...
+       (list (js-multi-defver (var init) ...)
              body ...)))
     ((_ (part ...) ((var init) rest ...) body ...)
      (js-let-helper (part ... (var init)) (rest ...) body ...))
     ((_ (part ...) ((var) rest ...) body ...)
      (js-let-helper (part ... (var ())) (rest ...) body ...))
+    ))
+
+(define-syntax js-defvar-helper
+  (syntax-rules ()
+    ((_ var ())
+     var)
+    ((_ var init ...)
+     (list var "=" init ...))
+    ))
+
+(define-syntax js-multi-defver
+  (syntax-rules ()
+    ((_ (var1 init1))
+     (js-statement "var" " " (js-defvar-helper var1 init1)))
+    ((_ (var1 init1) (rest-var rest-init) ...)
+     (js-statement "var" " "
+                   (js-defvar-helper var1 init1)
+                   (list "," (js-defvar-helper rest-var rest-init)) ...))
     ))
 
 (define (main args)
