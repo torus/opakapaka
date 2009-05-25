@@ -129,7 +129,6 @@
                 (js-statement func "=" func ".replace (/-/g, \"_\")")
 
                 (js-let ((args "[]"))
-                ;; (js-statement (js-defvar "args") "= []")
                 (js-for (js-statement (js-defvar "e") "= elem.firstChild") (js-statement "e") (js-statement* "e = e.nextSibling")
                         (js-statement args ".push (this.evaluate (e))")
                         )
@@ -145,7 +144,6 @@
       ,(js-defun
         "getDocHeight" "()"
         (js-let ((D "document"))
-        ;; (js-statement (js-defvar "D") "= document")
         (js-statement
          "return Math.max("
          "Math.max(" D ".body.scrollHeight," D ".documentElement.scrollHeight),"
@@ -178,12 +176,10 @@
                  ))
 
         (js-let ((ul `(,d ".createElement (\"ul\")")))
-        ;; (js-statement (js-defvar "ul") "= " d ".createElement (\"ul\")")
         (js-statement "" ul ".style.padding = \"0px\"")
         (js-statement b ".appendChild (" ul ")")
 
         (js-let ((out
-        ;; (js-statement (js-defvar "out") "= "
                       (js-anon-fun "(t)"
                                    (js-statement (js-defvar "x") "=" d ".createElement (\"li\")")
                                    (js-statement "x.style.listStyle = \"none\"")
@@ -193,10 +189,6 @@
                                    )))
 
         (js-let ((form_elem) (nameinput) (mailinput) (inputtext))
-        ;; (js-statement (js-defvar "form_elem"))
-        ;; (js-statement (js-defvar "nameinput"))
-        ;; (js-statement (js-defvar "mailinput"))
-        ;; (js-statement (js-defvar "inputtext"))
         (js-with env
                  (js-statement "" nameinput " = input ({type: \"text\", size: \"20\"}) (" d ")")
                  (js-statement "" nameinput ".name = \"nameinput\"")
