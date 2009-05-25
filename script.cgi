@@ -263,8 +263,6 @@
          (js-anon-fun
           "(ev)"
           (js-if "ev.keyCode == 13 && !ev.shiftKey"
-                 ;; (let ((var "text"))
-                 ;;   (js-statement (js-defvar var) "= inputtext.value")
                  (js-let
                   ((text `(,inputtext ".value")))
                   (js-statement "" inputtext ".value = \"\"")
@@ -273,12 +271,12 @@
                   )
                  )))
 
-        (js-statement (js-defvar "initial") "= true")
+        (js-let ((initial "true")
+                 (pos "0"))
 
-        (js-statement (js-defvar "pos") "= 0")
         (js-defun "get_log" "()"
                   (js-statement (js-defvar "client") "= new XMLHttpRequest()")
-                  (js-statement "client.open(\"GET\", \"./pull.cgi?p=\" + pos, true)")
+                  (js-statement "client.open(\"GET\", \"./pull.cgi?p=\" + " pos ", true)")
                   (js-statement "client.send(null)")
                   (js-statement
                    "client.onreadystatechange = "
@@ -286,7 +284,7 @@
                                 (js-if "this.readyState == 4"
                                        (js-if "this.status == 200"
                                               (js-statement (js-defvar "doc") "= this.responseXML")
-                                              (js-statement "pos = doc.getElementsByTagName (\"pos\")[0].firstChild.data")
+                                              (js-statement "" pos " = doc.getElementsByTagName (\"pos\")[0].firstChild.data")
 
                                               (js-for
                                                (js-statement (js-defvar "e") "= doc.getElementsByTagName (\"content\")[0].firstChild")
@@ -299,9 +297,9 @@
 
                                               (js-statement (js-defvar "scrollY") "= window.pageYOffset || document.body.scrollTop")
                                               (js-statement (js-defvar "threshold") "= getDocHeight () - window.innerHeight * 1.5")
-                                              (js-statement "updatestat (\"new pos = \" + pos + \" scrollY = \" + scrollY + \" threshold = \" + threshold)")
-                                              (js-if "initial || scrollY > threshold"
-                                                     (js-statement "initial = false")
+                                              (js-statement "updatestat (\"new pos = \" + " pos " + \" scrollY = \" + scrollY + \" threshold = \" + threshold)")
+                                              (js-if `(,initial " || scrollY > threshold")
+                                                     (js-statement "" initial " = false")
                                                      (js-statement "window.scrollTo (0, getDocHeight () - window.innerHeight)")
                                                      )
 
@@ -314,7 +312,7 @@
                                 ))
                   )
         (js-statement "get_log ()")
-        ))))
+        )))))
         )
 
       ,(js-defun
