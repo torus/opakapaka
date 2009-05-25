@@ -181,12 +181,12 @@
 
         (js-let ((out
                       (js-anon-fun "(t)"
-                                   (js-statement (js-defvar "x") "=" d ".createElement (\"li\")")
-                                   (js-statement "x.style.listStyle = \"none\"")
-                                   (js-statement "x.style.clear = \"both\"")
-                                   (js-statement "x.appendChild (t)")
-                                   (js-statement "" ul ".appendChild (x)")
-                                   )))
+                                   (js-let ((x `(,d ".createElement (\"li\")")))
+                                   (js-statement x ".style.listStyle = \"none\"")
+                                   (js-statement x ".style.clear = \"both\"")
+                                   (js-statement x ".appendChild (t)")
+                                   (js-statement "" ul ".appendChild (" x ")")
+                                   ))))
 
         (js-let ((form_elem) (nameinput) (mailinput) (inputtext))
         (js-with env
