@@ -283,14 +283,11 @@
                                                (js-statement* "e = e.nextSibling")
 
                                                (js-let ((x `("new D (" ,out ")")))
-                                               ;; (js-statement (js-defvar "x") "= new D (" out ")")
                                                        (js-statement x ".evaluate (e)")
                                                ))
 
                                               (js-let ((scrollY "window.pageYOffset || document.body.scrollTop")
                                                        (threshold "getDocHeight () - window.innerHeight * 1.5"))
-                                              ;; (js-statement (js-defvar "scrollY") "= window.pageYOffset || document.body.scrollTop")
-                                              ;; (js-statement (js-defvar "threshold") "= getDocHeight () - window.innerHeight * 1.5")
                                               (js-statement "" updatestat " (\"new pos = \" + " pos " + \" scrollY = \" + " scrollY " + \" threshold = \" + " threshold ")")
                                               (js-if `(,initial " || " ,scrollY " > " ,threshold "")
                                                      (js-statement "" initial " = false")
@@ -328,18 +325,18 @@
                            "+ hex_md5 (mail.toLowerCase ()) + \"?s=40\"))")
              )
 
-      (js-statement (js-defvar "doc") "= document.implementation.createDocument (\"\", \"\", null)")
-      (js-statement (js-defvar "elem") "= (" chat_entry " (" from " (" user_by_nickname " (" string " (name)),"
-                     "" avatar_elem "),"
-                     "" content " (" string " (text)))) (doc)")
+      (js-let ((doc "document.implementation.createDocument (\"\", \"\", null)")
+               (elem `("(" ,chat_entry " (" ,from " (" ,user_by_nickname " (" ,string " (name)),"
+                       "" ,avatar_elem "),"
+                       "" ,content " (" ,string " (text)))) (" ,doc ")")))
 
-      (js-statement "doc.appendChild (elem)")
+      (js-statement doc ".appendChild (" elem ")")
 
       (js-let ((client "new XMLHttpRequest()"))
       (js-statement "" client ".open(\"POST\", \"./push.cgi\")")
       (js-statement "" client ".setRequestHeader(\"Content-Type\", \"text/xml;charset=UTF-8\")")
-      (js-statement "" client ".send(doc)")
-      ))))
+      (js-statement "" client ".send(" doc ")")
+      )))))
 
       ,(js-defun
         "make_dom_element" "(tag)"
@@ -348,19 +345,17 @@
                 (js-statement "" attrs ".push (arguments[i])")
                 )
 
-        (js-statement
-         (js-defvar "dest") "= "
-         (js-anon-fun "()"
-                      (js-statement (js-defvar "args") "= arguments")
-                      (js-statement (js-defvar "len") "= arguments.length")
+        (js-let ((dest (js-anon-fun "()"
+                      (js-let ((args "arguments")
+                               (len "arguments.length"))
 
                       (js-statement "return " (js-anon-fun "(doc)"
                       (js-statement (js-defvar "e") "= doc.createElement (tag)")
-                      (js-for (js-statement (js-defvar "i") "= 0") (js-statement "i < len") (js-statement* "i ++")
-                              (js-statement (js-defvar "c") "= args[i]")
+                      (js-for (js-statement (js-defvar "i") "= 0") (js-statement "i < " len "") (js-statement* "i ++")
+                              (js-statement (js-defvar "c") "= " args "[i]")
                               (js-if "c == null" (js-statement "continue"))
                               (js-if "typeof (c) == \"function\""
-                                     (js-statement "e.appendChild (args[i](doc))")
+                                     (js-statement "e.appendChild (" args "[i](doc))")
                                      )
                               (js-else-if "typeof (c) == \"object\""
                                           (js-for-each (js-statement* (js-defvar "j") " " "in c")
@@ -375,9 +370,9 @@
                       (js-statement "return e")
                       )
                       )))
-
-        (js-statement "return dest")
-      ))
+                       ))
+        (js-statement "return" " " dest)
+      )))
 
       ;; "// delay to prevent spin gear on Safari"
       ,(js-statement "setTimeout (initialize, 1)")
