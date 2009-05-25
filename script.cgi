@@ -69,8 +69,8 @@
                   (js-statement "i <" lines ".length")
                   (js-statement* "i ++")
 
-                  (js-statement "lines_with_br.push (" br "())")
-                  (js-statement "lines_with_br.push (" lines "[i])")
+                  (js-statement lines_with_br ".push (" br "())")
+                  (js-statement lines_with_br ".push (" lines "[i])")
                   )
 
                  (js-statement
