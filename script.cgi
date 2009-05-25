@@ -28,10 +28,10 @@
      (let ((var (string-append "$" (symbol->string (gensym)))) ...)
        (list (js-statement (js-defvar var) (if (null? init) () (cons "=" init))) ...
              body ...)))
-    ((_ ((var) rest ...) () body ...)
-     (js-let-helper ((var ()) rest ...) () body ...))
-    ((_ (part ...) (var rest ...) body ...)
-     (js-let-helper (part ... var) (rest ...) body ...))
+    ((_ (part ...) ((var init) rest ...) body ...)
+     (js-let-helper (part ... (var init)) (rest ...) body ...))
+    ((_ (part ...) ((var) rest ...) body ...)
+     (js-let-helper (part ... (var ())) (rest ...) body ...))
     ))
 
 (define (main args)
@@ -177,38 +177,41 @@
                  (js-statement b ".appendChild (" head ")")
                  ))
 
-        (js-statement (js-defvar "ul") "= " d ".createElement (\"ul\")")
-        (js-statement "ul.style.padding = \"0px\"")
-        (js-statement b ".appendChild (ul)")
+        (js-let ((ul `(,d ".createElement (\"ul\")")))
+        ;; (js-statement (js-defvar "ul") "= " d ".createElement (\"ul\")")
+        (js-statement "" ul ".style.padding = \"0px\"")
+        (js-statement b ".appendChild (" ul ")")
 
-        (js-statement (js-defvar "out") "= "
+        (js-let ((out
+        ;; (js-statement (js-defvar "out") "= "
                       (js-anon-fun "(t)"
                                    (js-statement (js-defvar "x") "=" d ".createElement (\"li\")")
                                    (js-statement "x.style.listStyle = \"none\"")
                                    (js-statement "x.style.clear = \"both\"")
                                    (js-statement "x.appendChild (t)")
-                                   (js-statement "ul.appendChild (x)")
-                                   ))
+                                   (js-statement "" ul ".appendChild (x)")
+                                   )))
 
-        (js-statement (js-defvar "form_elem"))
-        (js-statement (js-defvar "nameinput"))
-        (js-statement (js-defvar "mailinput"))
-        (js-statement (js-defvar "inputtext"))
+        (js-let ((form_elem) (nameinput) (mailinput) (inputtext))
+        ;; (js-statement (js-defvar "form_elem"))
+        ;; (js-statement (js-defvar "nameinput"))
+        ;; (js-statement (js-defvar "mailinput"))
+        ;; (js-statement (js-defvar "inputtext"))
         (js-with env
-                 (js-statement "nameinput = input ({type: \"text\", size: \"20\"}) (" d ")")
-                 (js-statement "nameinput.name = \"nameinput\"")
-                 (js-statement "mailinput = input ({type: \"text\", size: \"50\"}) (" d ")")
-                 (js-statement "mailinput.name = \"mailinput\"")
-                 (js-statement "inputtext = textarea ({style: \"width:80%; height:10ex;\"}) (" d ")")
-                 (js-statement "form_elem = (form (\"Nickname: \", ewrap (nameinput),"
-                               "\"Gravatar e-mail: \", ewrap (mailinput),"
+                 (js-statement "" nameinput " = input ({type: \"text\", size: \"20\"}) (" d ")")
+                 (js-statement "" nameinput ".name = \"nameinput\"")
+                 (js-statement "" mailinput " = input ({type: \"text\", size: \"50\"}) (" d ")")
+                 (js-statement "" mailinput ".name = \"mailinput\"")
+                 (js-statement "" inputtext " = textarea ({style: \"width:80%; height:10ex;\"}) (" d ")")
+                 (js-statement "" form_elem " = (form (\"Nickname: \", ewrap (" nameinput "),"
+                               "\"Gravatar e-mail: \", ewrap (" mailinput "),"
                                "a ({href: \"http://gravatar.com\"}, \"What's this?\"),"
-                               "br (), ewrap (inputtext),"
+                               "br (), ewrap (" inputtext "),"
                                "p (\"[TIPS] Press Shift+Enter to add a new line.  \","
                                "a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\"))"
                                ")) (" d ")")
 
-                 (js-statement (js-defvar "cookied_inputs") "= {nameinput: nameinput, mailinput: mailinput}")
+                 (js-statement (js-defvar "cookied_inputs") "= {nameinput: " nameinput ", mailinput: " mailinput "}")
                  (js-for-each (js-statement* (js-defvar "i") " " "in cookied_inputs")
                               (js-statement (js-defvar "e") "= cookied_inputs[i]")
                               (js-statement
@@ -239,8 +242,8 @@
 
         ;; ,(js-statement "// alert ([form_elem, nameinput, mailinput, inputtext].join (\", \"))")
 
-        (js-statement "form_elem.onsubmit = " (js-anon-fun "()" (js-statement "return false")))
-        (js-statement b ".appendChild (form_elem)")
+        (js-statement "" form_elem ".onsubmit = " (js-anon-fun "()" (js-statement "return false")))
+        (js-statement b ".appendChild (" form_elem ")")
 
         (js-statement (js-defvar "stat") "=" d ".createElement (\"div\")")
         (js-statement (js-defvar "statcont") "=" d ".createElement (\"p\")")
@@ -263,9 +266,9 @@
                  ;; (let ((var "text"))
                  ;;   (js-statement (js-defvar var) "= inputtext.value")
                  (js-let
-                  ((text "inputtext.value"))
-                  (js-statement "inputtext.value = \"\"")
-                  (js-statement "sendtext (" d ", inputtext, ul, nameinput.value, mailinput.value, " text ")")
+                  ((text `(,inputtext ".value")))
+                  (js-statement "" inputtext ".value = \"\"")
+                  (js-statement "sendtext (" d ", " inputtext ", " ul ", " nameinput ".value, " mailinput ".value, " text ")")
                   (js-statement "return false")
                   )
                  )))
@@ -290,7 +293,7 @@
                                                (js-statement "e")
                                                (js-statement* "e = e.nextSibling")
 
-                                               (js-statement (js-defvar "x") "= new D (out)")
+                                               (js-statement (js-defvar "x") "= new D (" out ")")
                                                (js-statement "x.evaluate (e)")
                                                )
 
@@ -311,7 +314,7 @@
                                 ))
                   )
         (js-statement "get_log ()")
-        )
+        ))))
         )
 
       ,(js-defun
