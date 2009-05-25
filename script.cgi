@@ -166,13 +166,6 @@
           (b `(,d ".body"))
           (tags "[\"h1\", \"h2\", \"ul\", \"li\", \"form\", \"input\", \"textarea\", \"div\", \"p\", \"br\", \"a\"]")
           (env "{}"))
-        ;; (js-statement (js-defvar "d") "= document")
-        ;; (js-statement (js-defvar "b") "= d.body")
-
-        ;; (js-statement (js-defvar "tags")
-        ;;               "= [\"h1\", \"h2\", \"ul\", \"li\", \"form\", \"input\", \"textarea\", \"div\", \"p\", \"br\", \"a\"]")
-        ;; (js-statement (js-defvar "env") "= {}")
-
 
         (js-for-each (js-statement* (js-defvar "i") " " "in" " " tags)
                      (js-statement (js-defvar "t") " " "=" tags "[i]")
@@ -180,9 +173,9 @@
                      )
 
         (js-with env
-                 (js-statement (js-defvar "head") "= (h1 (\"Web chat\")) (" d ")")
-                 (js-statement b ".appendChild (head)")
-                 )
+                 (js-let ((head `("(h1 (\"Web chat\")) (" ,d ")")))
+                 (js-statement b ".appendChild (" head ")")
+                 ))
 
         (js-statement (js-defvar "ul") "= " d ".createElement (\"ul\")")
         (js-statement "ul.style.padding = \"0px\"")
