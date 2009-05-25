@@ -166,9 +166,9 @@
           (env "{}"))
 
         (js-for-each (js-statement* (js-defvar "i") " " "in" " " tags)
-                     (js-statement (js-defvar "t") " " "=" tags "[i]")
-                     (js-statement env "[t] = make_dom_element (t)")
-                     )
+                     (js-let ((t `(,tags "[i]")))
+                     (js-statement env "[" t "] = make_dom_element (" t ")")
+                     ))
 
         (js-with env
                  (js-let ((head `("(h1 (\"Web chat\")) (" ,d ")")))
