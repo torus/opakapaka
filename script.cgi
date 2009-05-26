@@ -52,23 +52,45 @@
                    (list "," (js-defvar-helper rest-var rest-init)) ...))
     ))
 
+(define-syntax js-join-with-comma
+  (syntax-rules ()
+    ((_) ())
+    ((_ x) x)
+    ((_ x rest ...) (list x (list "," rest) ...))
+    ))
+
+(define-syntax js-function
+  (syntax-rules ()
+    ((_ (var ...) body ...)
+     (let ((var (string-append "$" (symbol->string (gensym)))) ...)
+       (list "function" "(" (js-join-with-comma var ...) ")" "{"
+             body ... "}")))
+    ))
+
+(define-syntax js-named-function
+  (syntax-rules ()
+    ((_ name (var ...) body ...)
+     (let ((var (string-append "$" (symbol->string (gensym)))) ...)
+       (list "function" (if (null? name) () (list " " name)) "(" (js-join-with-comma var ...) ")" "{"
+             body ... "}")))
+    ))
+
 (define (main args)
   (write-tree
    `(,(cgi-header :content-type "text/javascript")
      ,(map (lambda (x) (list x "\n"))
            `(,(js-statement
                "D = "
-               (js-anon-fun
-                "(output)"
+               (js-function
+                (output)
                 (js-statement "this.state = {}")
-                (js-statement "this.outtext = " (js-anon-fun "(t)" (js-statement "output (document.createTextNode (t))")))
-                (js-statement "this.out = output")
+                (js-statement "this.outtext = " (js-function (t) (js-statement output " (document.createTextNode (" t "))")))
+                (js-statement "this.out = " output "")
                 ))
              ,(js-statement
                "D.prototype.chat_entry = "
-               (js-anon-fun
-                "()"
-
+               (js-function
+                ()
                 (js-let
                  ((img "make_dom_element (\"img\")")
                   (p "make_dom_element (\"p\")")
@@ -106,66 +128,66 @@
 
              ,(js-statement
                "D.prototype.from = "
-               (js-anon-fun
-                "(user)"
-                (js-statement "this.state.nickname = user.nickname")
+               (js-function
+                (user)
+                (js-statement "this.state.nickname =" user ".nickname")
                 ))
 
              ,(js-statement
                "D.prototype.user_by_nickname = "
-               (js-anon-fun
-                "(name)"
-                (js-statement "return {nickname: name}")
+               (js-function
+                (name)
+                (js-statement "return {nickname:" name "}")
                 ))
 
              ,(js-statement
                "D.prototype.string = "
-               (js-anon-fun
-                "(elem)"
-                (js-statement "return elem ? elem.nodeValue : \"\"")
+               (js-function
+                (elem)
+                (js-statement "return " elem " ? " elem ".nodeValue : \"\"")
                 ))
 
              ,(js-statement
                "D.prototype.content = "
-               (js-anon-fun
-                "(cont)"
-                (js-statement "this.state.content = cont")
+               (js-function
+                (cont)
+                (js-statement "this.state.content =" cont)
                 ))
 
              ,(js-statement
                "D.prototype.avatar_image = "
-               (js-anon-fun
-                "(url)"
-                (js-statement "this.state.avatar_image = url")
+               (js-function
+                (url)
+                (js-statement "this.state.avatar_image =" url)
                 ))
 
              ,(js-statement
                "D.prototype.evaluate = "
-               (js-anon-fun
-                "(elem)"
+               (js-function
+                (elem)
                 (js-if
-                 "elem.nodeType == 1"
+                 `(,elem ".nodeType == 1")
                  (js-let
-                  ((func "elem.tagName"))
+                  ((func `(,elem ".tagName")))
                   (js-statement func "=" func ".replace (/-/g, \"_\")")
 
                   (js-let
                    ((args "[]"))
                    (js-for
-                    (js-statement (js-defvar "e") "= elem.firstChild") (js-statement "e") (js-statement* "e = e.nextSibling")
+                    (js-statement (js-defvar "e") "= " elem ".firstChild") (js-statement "e") (js-statement* "e = e.nextSibling")
                     (js-statement args ".push (this.evaluate (e))")
                     )
 
                    (js-statement "return this[" func "].apply (this," args ")")
                    )))
                 (js-else
-                 (js-statement "return elem")
+                 (js-statement "return " elem "")
                  )
                 ))
 
              ;; "// http://james.padolsey.com/javascript/get-document-height-cross-browser/"
-             ,(js-defun
-               "getDocHeight" "()"
+             ,(js-named-function
+               "getDocHeight" ()
                (js-let
                 ((D "document"))
                 (js-statement
@@ -176,13 +198,13 @@
                  ")")
                 ))
 
-             ,(js-defun
-               "ewrap" "(e)"
-               (js-statement "return " (js-anon-fun "()" (js-statement "return e")))
+             ,(js-named-function
+               "ewrap" (e)
+               (js-statement "return " (js-function () (js-statement "return " e)))
                )
 
-             ,(js-defun
-               "initialize" "()"
+             ,(js-named-function
+               "initialize" ()
                (js-let
                 ((d "document")
                  (b `(,d ".body"))
@@ -208,11 +230,11 @@
 
                  (js-let
                   ((out
-                    (js-anon-fun "(t)"
+                    (js-function (t)
                                  (js-let ((x `(,d ".createElement (\"li\")")))
                                          (js-statement x ".style.listStyle = \"none\"")
                                          (js-statement x ".style.clear = \"both\"")
-                                         (js-statement x ".appendChild (t)")
+                                         (js-statement x ".appendChild (" t ")")
                                          (js-statement ul ".appendChild (" x ")")
                                          ))))
 
@@ -301,15 +323,15 @@
                      (js-let
                       ((initial "true")
                        (pos "0"))
-                      (js-defun
-                       "get_log" "()"
+                      (js-named-function
+                       "get_log" ()
                        (js-statement (js-defvar "client") "= new XMLHttpRequest()")
                        (js-statement "client.open(\"GET\", \"./pull.cgi?p=\" + " pos ", true)")
                        (js-statement "client.send(null)")
                        (js-statement
                         "client.onreadystatechange = "
-                        (js-anon-fun
-                         "()"
+                        (js-function
+                         ()
                          (js-if
                           "this.readyState == 4"
                           (js-if
@@ -351,8 +373,8 @@
                       )))))))
                )
 
-             ,(js-defun
-               "sendtext" "(d, inputtext, ul, name, mail, text)"
+             ,(js-named-function
+               "sendtext" (d inputtext ul name mail text)
                (js-let
                 ((chat_entry "make_dom_element (\"chat-entry\")")
                  (from "make_dom_element (\"from\")")
@@ -361,20 +383,20 @@
                  (string "make_dom_element (\"string\")")
                  (content "make_dom_element (\"content\")"))
 
-                (js-if "!(name && name.length > 0)"
-                       (js-statement "name = \"Anonymous\""))
+                (js-if `("!(" ,name " && " ,name ".length > 0)")
+                       (js-statement name " = \"Anonymous\""))
 
                 (js-let
                  ((avatar_elem "null"))
-                 (js-if "mail && mail.length > 0"
+                 (js-if `(,mail " && " ,mail ".length > 0")
                         (js-statement avatar_elem " = " avatar_img " (" string " (\"http://www.gravatar.com/avatar/\""
-                                      "+ hex_md5 (mail.toLowerCase ()) + \"?s=40\"))"))
+                                      "+ hex_md5 (" mail ".toLowerCase ()) + \"?s=40\"))"))
 
                  (js-let
                   ((doc "document.implementation.createDocument (\"\", \"\", null)")
-                   (elem `("(" ,chat_entry " (" ,from " (" ,user_by_nickname " (" ,string " (name)),"
+                   (elem `("(" ,chat_entry " (" ,from " (" ,user_by_nickname " (" ,string " (" ,name ")),"
                             ,avatar_elem "),"
-                            ,content " (" ,string " (text)))) (" ,doc ")")))
+                            ,content " (" ,string " (" ,text ")))) (" ,doc ")")))
 
                   (js-statement doc ".appendChild (" elem ")")
 
@@ -385,38 +407,39 @@
                    (js-statement client ".send(" doc ")")
                    )))))
 
-             ,(js-defun
-               "make_dom_element" "(tag)"
+             ,(js-named-function
+               "make_dom_element" (tag)
                (js-let
                 ((attrs "[]"))
                 (js-for (js-statement (js-defvar "i") "= 1") (js-statement "i < arguments.length") (js-statement* "i ++")
                         (js-statement attrs ".push (arguments[i])"))
 
                 (js-let
-                 ((dest (js-anon-fun
-                         "()"
+                 ((dest (js-function
+                         ()
                          (js-let
                           ((args "arguments")
                            (len "arguments.length"))
 
                           (js-statement
                            "return "
-                           (js-anon-fun
-                            "(doc)"
+                           (js-function
+                            (doc)
                             (js-let
-                             ((e "doc.createElement (tag)"))
+                             ((e `(,doc ".createElement (" ,tag ")")))
                              (js-for
                               (js-statement (js-defvar "i") "= 0") (js-statement "i < " len ) (js-statement* "i ++")
                               (js-statement (js-defvar "c") "= " args "[i]")
                               (js-if "c == null" (js-statement "continue"))
                               (js-if "typeof (c) == \"function\""
-                                     (js-statement e ".appendChild (" args "[i](doc))"))
+                                     (js-statement e ".appendChild (" args "[i](" doc "))"))
                               (js-else-if "typeof (c) == \"object\""
                                           (js-for-each (js-statement* (js-defvar "j") " " "in c")
                                                        (js-statement e ".setAttribute (j, c[j])")))
                               (js-else
-                               (js-statement (js-defvar "t") "= doc.createTextNode (c)")
-                               (js-statement e ".appendChild (t)"))
+                               (js-let
+                                ((t `(,doc ".createTextNode (c)")))
+                                (js-statement e ".appendChild (" t ")")))
                               )
                              (js-statement "return " e )
                              ))
