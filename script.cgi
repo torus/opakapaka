@@ -75,6 +75,19 @@
              body ... "}")))
     ))
 
+(define-syntax js-for/defvar
+  (syntax-rules ()
+    ((_ ((var init) ...) condition succ body ...)
+     (let ((var (string-append "$" (symbol->string (gensym)))) ...)
+       (list "for" "("
+             (js-multi-defver (var init) ...)
+             condition
+             succ ")" "{"
+             body ... "}")
+       )
+     )
+    ))
+
 (define (main args)
   (write-tree
    `(,(cgi-header :content-type "text/javascript")
@@ -104,13 +117,13 @@
                   (lines "this.state.content.split (/\\r*\\n/)")
                   (lines_with_br (list "[" lines "[0]]")))
 
-                 (js-for
-                  (js-statement (js-defvar "i") "= 1")
-                  (js-statement "i <" lines ".length")
-                  (js-statement* "i ++")
+                 (js-for/defvar
+                  ((i "1"))
+                  (js-statement i "<" lines ".length")
+                  (js-statement* i "++")
 
                   (js-statement lines_with_br ".push (" br "())")
-                  (js-statement lines_with_br ".push (" lines "[i])")
+                  (js-statement lines_with_br ".push (" lines "[" i "])")
                   )
 
                  (js-statement
