@@ -186,9 +186,10 @@
 
                   (js-let
                    ((args "[]"))
-                   (js-for
-                    (js-statement (js-defvar "e") "= " elem ".firstChild") (js-statement "e") (js-statement* "e = e.nextSibling")
-                    (js-statement args ".push (this.evaluate (e))")
+                   (js-for/defvar
+                    ((e `(,elem ".firstChild")))
+                    (js-statement e) (js-statement* e "=" e ".nextSibling")
+                    (js-statement args ".push (this.evaluate (" e "))")
                     )
 
                    (js-statement "return this[" func "].apply (this," args ")")
@@ -352,15 +353,16 @@
                            (js-let
                             ((doc "this.responseXML"))
                             (js-statement pos " = " doc ".getElementsByTagName (\"pos\")[0].firstChild.data")
-
-                            (js-for
-                             (js-statement (js-defvar "e") "= " doc ".getElementsByTagName (\"content\")[0].firstChild")
-                             (js-statement "e")
-                             (js-statement* "e = e.nextSibling")
+                            
+                            (js-for/defvar
+                             ((e `(,doc ".getElementsByTagName (\"content\")[0].firstChild")))
+                             ;; (js-statement (js-defvar "e") "= " doc ".getElementsByTagName (\"content\")[0].firstChild")
+                             (js-statement e)
+                             (js-statement* e "=" e ".nextSibling")
 
                              (js-let
                               ((x `("new D (" ,out ")")))
-                              (js-statement x ".evaluate (e)")
+                              (js-statement x ".evaluate (" e ")")
                               ))
 
                             (js-let
@@ -424,8 +426,11 @@
                "make_dom_element" (tag)
                (js-let
                 ((attrs "[]"))
-                (js-for (js-statement (js-defvar "i") "= 1") (js-statement "i < arguments.length") (js-statement* "i ++")
-                        (js-statement attrs ".push (arguments[i])"))
+                (js-for/defvar
+                 ((i "1"))
+                 ;; (js-statement (js-defvar "i") "= 1")
+                 (js-statement i "< arguments.length") (js-statement* i "++")
+                        (js-statement attrs ".push (arguments[" i "])"))
 
                 (js-let
                  ((dest (js-function
@@ -440,12 +445,14 @@
                             (doc)
                             (js-let
                              ((e `(,doc ".createElement (" ,tag ")")))
-                             (js-for
-                              (js-statement (js-defvar "i") "= 0") (js-statement "i < " len ) (js-statement* "i ++")
-                              (js-statement (js-defvar "c") "= " args "[i]")
+                             (js-for/defvar
+                              ((i "0"))
+                              ;; (js-statement (js-defvar "i") "= 0")
+                              (js-statement i "<" len ) (js-statement* i "++")
+                              (js-statement (js-defvar "c") "= " args "[" i "]")
                               (js-if "c == null" (js-statement "continue"))
                               (js-if "typeof (c) == \"function\""
-                                     (js-statement e ".appendChild (" args "[i](" doc "))"))
+                                     (js-statement e ".appendChild (" args "[" i "](" doc "))"))
                               (js-else-if "typeof (c) == \"object\""
                                           (js-for-each (js-statement* (js-defvar "j") " " "in c")
                                                        (js-statement e ".setAttribute (j, c[j])")))
