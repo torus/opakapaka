@@ -88,6 +88,14 @@
      )
     ))
 
+(define-syntax js-for/iter
+  (syntax-rules (->)
+    ((_ (x -> s) body ...)
+     (let1 x (string-append "$" (symbol->string (gensym)))
+       (list "for" "(" "var" " " x " " "in" " " s ")" "{" body ... "}")
+     ))
+    ))
+
 (define (main args)
   (write-tree
    `(,(cgi-header :content-type "text/javascript")
@@ -225,9 +233,10 @@
                  (tags "[\"h1\", \"h2\", \"ul\", \"li\", \"form\", \"input\", \"textarea\", \"div\", \"p\", \"br\", \"a\"]")
                  (env "{}"))
 
-                (js-for-each
-                 (js-statement* (js-defvar "i") " " "in" " " tags)
-                 (js-let ((t `(,tags "[i]")))
+                (js-for/iter
+                 (i -> tags)
+                 ;; (js-statement* (js-defvar "i") " " "in" " " tags)
+                 (js-let ((t `(,tags "[" ,i "]")))
                          (js-statement env "[" t "] = make_dom_element (" t ")")
                          ))
 
@@ -271,9 +280,10 @@
 
                     (js-let
                      ((cookied_inputs `("{nameinput: " ,nameinput ", mailinput: " ,mailinput "}")))
-                     (js-for-each
-                      (js-statement* (js-defvar "i") " " "in " cookied_inputs )
-                      (js-statement (js-defvar "e") "= " cookied_inputs "[i]")
+                     (js-for/iter
+                      (i -> cookied_inputs)
+                      ;; (js-statement* (js-defvar "i") " " "in " cookied_inputs )
+                      (js-statement (js-defvar "e") "= " cookied_inputs "[" i "]")
                       (js-statement
                        "e.onchange = "
                        (js-anon-fun
