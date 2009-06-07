@@ -282,7 +282,6 @@
                      ((cookied_inputs `("{nameinput: " ,nameinput ", mailinput: " ,mailinput "}")))
                      (js-for/iter
                       (i -> cookied_inputs)
-                      ;; (js-statement* (js-defvar "i") " " "in " cookied_inputs )
                       (js-statement (js-defvar "e") "= " cookied_inputs "[" i "]")
                       (js-statement
                        "e.onchange = "
@@ -301,7 +300,6 @@
                        ((lis `(,d ".cookie.split (/;\\s*/)")))
                        (js-for/iter
                         (i -> lis)
-                        ;; (js-statement* (js-defvar "i") " " "in " lis)
                         (js-let
                          ((key_value `(,lis "[" ,i "].split (/=/)"))
                           (key `(,key_value "[0]"))
@@ -367,7 +365,6 @@
                             
                             (js-for/defvar
                              ((e `(,doc ".getElementsByTagName (\"content\")[0].firstChild")))
-                             ;; (js-statement (js-defvar "e") "= " doc ".getElementsByTagName (\"content\")[0].firstChild")
                              (js-statement e)
                              (js-statement* e "=" e ".nextSibling")
 
@@ -439,7 +436,6 @@
                 ((attrs "[]"))
                 (js-for/defvar
                  ((i "1"))
-                 ;; (js-statement (js-defvar "i") "= 1")
                  (js-statement i "< arguments.length") (js-statement* i "++")
                         (js-statement attrs ".push (arguments[" i "])"))
 
@@ -458,14 +454,13 @@
                              ((e `(,doc ".createElement (" ,tag ")")))
                              (js-for/defvar
                               ((i "0"))
-                              ;; (js-statement (js-defvar "i") "= 0")
                               (js-statement i "<" len ) (js-statement* i "++")
                               (js-statement (js-defvar "c") "= " args "[" i "]")
                               (js-if "c == null" (js-statement "continue"))
                               (js-if "typeof (c) == \"function\""
                                      (js-statement e ".appendChild (" args "[" i "](" doc "))"))
                               (js-else-if "typeof (c) == \"object\""
-                                          (js-for/iter (j -> "c") ;; (js-statement* (js-defvar "j") " " "in c")
+                                          (js-for/iter (j -> "c")
                                                        (js-statement e ".setAttribute (" j ", c[" j "])")))
                               (js-else
                                (js-let
