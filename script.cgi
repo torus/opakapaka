@@ -439,7 +439,7 @@
                 (js-for/defvar
                  ((i "1"))
                  (js-statement i "< arguments.length") (js-statement* i "++")
-                        (js-statement attrs ".push (arguments[" i "])"))
+                 (js-statement attrs ".push (arguments[" i "])"))
 
                 (js-let
                  ((dest (js-function
@@ -459,18 +459,17 @@
                               (js-statement i "<" len ) (js-statement* i "++")
                               (js-let
                                ((c `(,args "[" ,i "]")))
-                              ;; (js-statement (js-defvar "c") "= " args "[" i "]")
-                              (js-if `(,c " == null") (js-statement "continue"))
-                              (js-if `("typeof (" ,c ") == \"function\"")
-                                     (js-statement e ".appendChild (" args "[" i "](" doc "))"))
-                              (js-else-if `("typeof (" ,c ") == \"object\"")
-                                          (js-for/iter (j -> c)
-                                                       (js-statement e ".setAttribute (" j ", " c "[" j "])")))
-                              (js-else
-                               (js-let
-                                ((t `(,doc ".createTextNode (" ,c ")")))
-                                (js-statement e ".appendChild (" t ")")))
-                              ))
+                               (js-if `(,c " == null") (js-statement "continue"))
+                               (js-if `("typeof (" ,c ") == \"function\"")
+                                      (js-statement e ".appendChild (" args "[" i "](" doc "))"))
+                               (js-else-if `("typeof (" ,c ") == \"object\"")
+                                           (js-for/iter (j -> c)
+                                                        (js-statement e ".setAttribute (" j ", " c "[" j "])")))
+                               (js-else
+                                (js-let
+                                 ((t `(,doc ".createTextNode (" ,c ")")))
+                                 (js-statement e ".appendChild (" t ")")))
+                               ))
                              (js-statement "return " e )
                              ))
                            )))
