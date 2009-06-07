@@ -235,7 +235,6 @@
 
                 (js-for/iter
                  (i -> tags)
-                 ;; (js-statement* (js-defvar "i") " " "in" " " tags)
                  (js-let ((t `(,tags "[" ,i "]")))
                          (js-statement env "[" t "] = make_dom_element (" t ")")
                          ))
@@ -282,17 +281,19 @@
                      ((cookied_inputs `("{nameinput: " ,nameinput ", mailinput: " ,mailinput "}")))
                      (js-for/iter
                       (i -> cookied_inputs)
-                      (js-statement (js-defvar "e") "= " cookied_inputs "[" i "]")
-                      (js-statement
-                       "e.onchange = "
-                       (js-anon-fun
-                        "()"
-                        (js-let
-                         ((exp "new Date()"))
-                         (js-statement exp ".setTime (new Date ().getTime () + 1000 * 60 * 60 * 24 * 14)") ; // 14 days
-                         (js-statement d ".cookie = this.name + \"=\"+ escape (this.value) + \";expires=\"+" exp ".toGMTString ()")
-                         ))
-                       ))
+                      (js-let
+                       ((e `(,cookied_inputs "[" ,i "]")))
+                       (js-statement
+                        e ".onchange = "
+                        (js-anon-fun
+                         "()"
+                         (js-let
+                          ((exp "new Date()"))
+                          (js-statement exp ".setTime (new Date ().getTime () + 1000 * 60 * 60 * 24 * 14)") ; // 14 days
+                          (js-statement d ".cookie = this.name + \"=\"+ escape (this.value) + \";expires=\"+"
+                                        exp ".toGMTString ()")
+                          ))
+                        )))
 
                      (js-if
                       `(,d ".cookie")
@@ -348,11 +349,12 @@
                        (pos "0"))
                       (js-named-function
                        "get_log" ()
-                       (js-statement (js-defvar "client") "= new XMLHttpRequest()")
-                       (js-statement "client.open(\"GET\", \"./pull.cgi?p=\" + " pos ", true)")
-                       (js-statement "client.send(null)")
+                       (js-let
+                        ((client "new XMLHttpRequest()"))
+                       (js-statement "" client ".open(\"GET\", \"./pull.cgi?p=\" + " pos ", true)")
+                       (js-statement "" client ".send(null)")
                        (js-statement
-                        "client.onreadystatechange = "
+                        "" client ".onreadystatechange = "
                         (js-function
                          ()
                          (js-if
@@ -391,7 +393,7 @@
                            )
                           )
                          ))
-                       )
+                       ))
                       (js-statement "get_log ()")
                       )))))))
                )
