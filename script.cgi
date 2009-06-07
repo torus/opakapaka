@@ -6,7 +6,6 @@
 
 (define (js-statement . x) (list x ";"))
 (define (js-statement* . x) x)
-(define (js-anon-fun args . body) (list "function" args "{" body "}"))
 (define (js-if condition . body) (list "if(" condition "){" body "}"))
 (define (js-else-if condition . body) (list "else" " " (apply js-if condition body)))
 (define (js-else . body) (list "else{" body "}"))
@@ -281,8 +280,8 @@
                        ((e `(,cookied_inputs "[" ,i "]")))
                        (js-statement
                         e ".onchange = "
-                        (js-anon-fun
-                         "()"
+                        (js-function
+                         ()
                          (js-let
                           ((exp "new Date()"))
                           (js-statement exp ".setTime (new Date ().getTime () + 1000 * 60 * 60 * 24 * 14)") ; // 14 days
@@ -309,7 +308,7 @@
                        ))
                      ))
 
-                   (js-statement form_elem ".onsubmit = " (js-anon-fun "()" (js-statement "return false")))
+                   (js-statement form_elem ".onsubmit = " (js-function () (js-statement "return false")))
                    (js-statement b ".appendChild (" form_elem ")")
 
                    (js-let
@@ -322,16 +321,16 @@
                     (js-statement stat ".style.backgroundColor = \"#cccccc\"")
 
                     (js-let
-                     ((updatestat (js-anon-fun "(text)"
-                                               (js-statement stattext ".nodeValue = text")
+                     ((updatestat (js-function (text)
+                                               (js-statement stattext ".nodeValue =" text)
                                                )))
 
                      (js-statement
                       "window.onkeypress = "
-                      (js-anon-fun
-                       "(ev)"
+                      (js-function
+                       (ev)
                        (js-if
-                        "ev.keyCode == 13 && !ev.shiftKey"
+                        `(,ev ".keyCode == 13 && !" ,ev ".shiftKey")
                         (js-let
                          ((text `(,inputtext ".value")))
                          (js-statement inputtext ".value = \"\"")
