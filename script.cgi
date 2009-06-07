@@ -457,18 +457,20 @@
                              (js-for/defvar
                               ((i "0"))
                               (js-statement i "<" len ) (js-statement* i "++")
-                              (js-statement (js-defvar "c") "= " args "[" i "]")
-                              (js-if "c == null" (js-statement "continue"))
-                              (js-if "typeof (c) == \"function\""
+                              (js-let
+                               ((c `(,args "[" ,i "]")))
+                              ;; (js-statement (js-defvar "c") "= " args "[" i "]")
+                              (js-if `(,c " == null") (js-statement "continue"))
+                              (js-if `("typeof (" ,c ") == \"function\"")
                                      (js-statement e ".appendChild (" args "[" i "](" doc "))"))
-                              (js-else-if "typeof (c) == \"object\""
-                                          (js-for/iter (j -> "c")
-                                                       (js-statement e ".setAttribute (" j ", c[" j "])")))
+                              (js-else-if `("typeof (" ,c ") == \"object\"")
+                                          (js-for/iter (j -> c)
+                                                       (js-statement e ".setAttribute (" j ", " c "[" j "])")))
                               (js-else
                                (js-let
-                                ((t `(,doc ".createTextNode (c)")))
+                                ((t `(,doc ".createTextNode (" ,c ")")))
                                 (js-statement e ".appendChild (" t ")")))
-                              )
+                              ))
                              (js-statement "return " e )
                              ))
                            )))
