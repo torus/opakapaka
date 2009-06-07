@@ -299,10 +299,11 @@
                       `(,d ".cookie")
                       (js-let
                        ((lis `(,d ".cookie.split (/;\\s*/)")))
-                       (js-for-each
-                        (js-statement* (js-defvar "i") " " "in " lis)
+                       (js-for/iter
+                        (i -> lis)
+                        ;; (js-statement* (js-defvar "i") " " "in " lis)
                         (js-let
-                         ((key_value `(,lis "[i].split (/=/)"))
+                         ((key_value `(,lis "[" ,i "].split (/=/)"))
                           (key `(,key_value "[0]"))
                           (val `(,key_value "[1]")))
 
@@ -464,8 +465,8 @@
                               (js-if "typeof (c) == \"function\""
                                      (js-statement e ".appendChild (" args "[" i "](" doc "))"))
                               (js-else-if "typeof (c) == \"object\""
-                                          (js-for-each (js-statement* (js-defvar "j") " " "in c")
-                                                       (js-statement e ".setAttribute (j, c[j])")))
+                                          (js-for/iter (j -> "c") ;; (js-statement* (js-defvar "j") " " "in c")
+                                                       (js-statement e ".setAttribute (" j ", c[" j "])")))
                               (js-else
                                (js-let
                                 ((t `(,doc ".createTextNode (c)")))
