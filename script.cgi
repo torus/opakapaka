@@ -6,15 +6,11 @@
 
 (define (js-statement . x) (list x ";"))
 (define (js-statement* . x) x)
-(define (js-defun name args . body) (list "function" " " name args "{" body "}"))
 (define (js-anon-fun args . body) (list "function" args "{" body "}"))
-(define (js-for init condition succ . body) (list "for(" init condition succ "){" body "}"))
-(define (js-for-each x . body) (list "for(" x "){" body "}"))
 (define (js-if condition . body) (list "if(" condition "){" body "}"))
 (define (js-else-if condition . body) (list "else" " " (apply js-if condition body)))
 (define (js-else . body) (list "else{" body "}"))
 (define (js-with obj . body) (list "with(" obj "){" body "}"))
-(define (js-defvar . v) (list "var" " " v))
 
 (define-syntax js-let
   (syntax-rules ()
