@@ -62,7 +62,7 @@
              body ... "}")))
     ))
 
-(define-syntax js-named-function
+(define-syntax js-defun
   (syntax-rules ()
     ((_ name (var ...) body ...)
      (let ((var (string-append "$" (symbol->string (gensym)))) ...)
@@ -203,7 +203,7 @@
                 ))
 
              ;; "// http://james.padolsey.com/javascript/get-document-height-cross-browser/"
-             ,(js-named-function
+             ,(js-defun
                "getDocHeight" ()
                (js-let
                 ((D "document"))
@@ -215,12 +215,12 @@
                  ")")
                 ))
 
-             ,(js-named-function
+             ,(js-defun
                "ewrap" (e)
                (js-statement "return " (js-function () (js-statement "return " e)))
                )
 
-             ,(js-named-function
+             ,(js-defun
                "initialize" ()
                (js-let
                 ((d "document")
@@ -342,7 +342,7 @@
                      (js-let
                       ((initial "true")
                        (pos "0"))
-                      (js-named-function
+                      (js-defun
                        "get_log" ()
                        (js-let
                         ((client "new XMLHttpRequest()"))
@@ -393,7 +393,7 @@
                       )))))))
                )
 
-             ,(js-named-function
+             ,(js-defun
                "sendtext" (d inputtext ul name mail text)
                (js-let
                 ((chat_entry "make_dom_element (\"chat-entry\")")
@@ -427,7 +427,7 @@
                    (js-statement client ".send(" doc ")")
                    )))))
 
-             ,(js-named-function
+             ,(js-defun
                "make_dom_element" (tag)
                (js-let
                 ((attrs "[]"))
