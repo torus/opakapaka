@@ -15,15 +15,23 @@
 
 (define (push-filter x) x)
 
-(define (main args)
+(define (cgi-writer outport doc)
+  (with-output-to-locked-port
+   outport
+   (lambda ()
+     (newline)                    ; First, write a newline
+     (write doc) ; Then, add a item so that the file always end with ")"
+     ))
+  )
+
+(define (frontend writer)
   (let* ((port (current-input-port))
          (doc (ssax:xml->sxml port ())))
     (let ((out (open-output-file "data.log" :if-exists :append))
           (doc (push-filter (cadr doc))))
-      (with-output-to-locked-port out
-         (lambda ()
-           (newline)                    ; First, write a newline
-           (write doc) ; Then, add a item so that the file always end with ")"
-           ))))
+      (writer out doc)))
   (write-tree
    `(,(cgi-header))))
+
+(define (main args)
+  (frontend cgi-writer))
