@@ -131,7 +131,7 @@
 
                  (js-statement
                   (js-let
-                   ((e `("(" ,table "({style: \"width: 80%\"},"
+                   ((e `("(" ,table "({style: \"width: 100%; max-width: 100ex\"},"
                          ,tr "({style: \"background-color: rgb(200, 200, 255)\"},"
                          ,td "({width: \"50\", height: \"40\", style: \"vertical-align: top\"},"
                          ,imgsrc "?" ,img "({src:" ,imgsrc "}) : null),"
@@ -263,7 +263,7 @@
                     (js-statement nameinput ".name = \"nameinput\"")
                     (js-statement mailinput " = input ({type: \"text\", size: \"50\"}) (" d ")")
                     (js-statement mailinput ".name = \"mailinput\"")
-                    (js-statement inputtext " = textarea ({style: \"width:80%; height:10ex;\"}) (" d ")")
+                    (js-statement inputtext " = textarea ({style: \"width:100%; max-width:100ex; height:10ex;\"}) (" d ")")
                     (js-statement form_elem " = (form (\"Nickname: \", ewrap (" nameinput "),"
                                   "\"Gravatar e-mail: \", ewrap (" mailinput "),"
                                   "a ({href: \"http://gravatar.com\"}, \"What's this?\"),"
