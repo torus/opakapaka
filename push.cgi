@@ -26,8 +26,9 @@
 
 (define (frontend writer)
   (let* ((port (current-input-port))
-         (doc (ssax:xml->sxml port ())))
-    (let ((out (open-output-file "data.log" :if-exists :append))
+         (doc (ssax:xml->sxml port ()))
+         )
+    (let ((out (open-output-file "current" :if-exists :append))
           (doc (push-filter (cadr doc))))
       (writer out doc)))
   (write-tree

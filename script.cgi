@@ -341,13 +341,16 @@
 
                      (js-let
                       ((initial "true")
-                       (pos "0"))
+                       (pos "0")
+                       (file))
                       (js-defun
                        "get_log" ()
                        (js-let
                         ((client "new XMLHttpRequest()"))
-                       (js-statement "" client ".open(\"GET\", \"./pull.cgi?p=\" + " pos ", true)")
-                       (js-statement "" client ".send(null)")
+                       (js-statement client
+                                     ".open(\"GET\", \"./pull.cgi?p=\" + "
+                                     pos "+ \"&q=\" + " file ", true)")
+                       (js-statement client ".send(null)")
                        (js-statement
                         "" client ".onreadystatechange = "
                         (js-function
@@ -359,6 +362,7 @@
                            (js-let
                             ((doc "this.responseXML"))
                             (js-statement pos " = " doc ".getElementsByTagName (\"pos\")[0].firstChild.data")
+                            (js-statement file " = " doc ".getElementsByTagName (\"file\")[0].firstChild.data")
                             
                             (js-for/defvar
                              ((e `(,doc ".getElementsByTagName (\"content\")[0].firstChild")))
@@ -373,7 +377,10 @@
                             (js-let
                              ((scrollY "window.pageYOffset || document.body.scrollTop")
                               (threshold "getDocHeight () - window.innerHeight * 1.5"))
-                             (js-statement updatestat " (\"new pos = \" + " pos " + \" scrollY = \" + " scrollY " + \" threshold = \" + " threshold ")")
+                             (js-statement updatestat " (\"new pos = \" + " pos
+                                           " + \" file = \" + " file
+                                           " + \" scrollY = \" + " scrollY
+                                           " + \" threshold = \" + " threshold ")")
                              (js-if
                               `(,initial " || " ,scrollY " > " ,threshold )
                               (js-statement initial " = false")
