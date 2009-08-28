@@ -3,6 +3,9 @@
 
 (use sxml.serializer)
 (use www.cgi)
+(use file.util)
+
+(load "./file")
 
 (define (main args)
   (frontend read-from-log pull-filter))
@@ -24,7 +27,7 @@
 
 (define (read-from-log file pos)
   (let ((pos (or pos 0))
-        (file (or (sys-readlink "current"))))
+        (file (get-or-prepare-log-file)))
     (let ((port (open-input-file file)))
       (let wait-loop ((count 0))
         (let ((end (port-seek port 0 SEEK_END)))

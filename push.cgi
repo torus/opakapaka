@@ -7,6 +7,8 @@
 (use www.cgi)
 (use text.tree)
 
+(load "./file")
+
 (define (with-output-to-locked-port port thunk)
   (sys-fcntl port F_SETLKW (make <sys-flock> :type F_WRLCK))
   (with-output-to-port port thunk)
@@ -15,12 +17,14 @@
 
 (define (push-filter x) x)
 
-(define (cgi-writer outport doc)
+(define (cgi-writer outport . doc)
   (with-output-to-locked-port
    outport
    (lambda ()
-     (newline)                    ; First, write a newline
-     (write doc) ; Then, add a item so that the file always end with ")"
+     (for-each (lambda (e)
+                 (newline)              ; First, write a newline
+                 (write e)) ; Then, add a item so that the file always ends with ")"
+               doc)
      ))
   )
 
@@ -28,9 +32,15 @@
   (let* ((port (current-input-port))
          (doc (ssax:xml->sxml port ()))
          )
-    (let ((out (open-output-file "current" :if-exists :append))
+    (let ((out (open-output-file *link* :if-exists :append))
           (doc (push-filter (cadr doc))))
-      (writer out doc)))
+      (if (> (port-seek out 0 SEEK_END) *max-file-size*)
+          (let1 newfile (create-new-file)
+            (sys-unlink *link*)
+            (sys-symlink newfile *link*)
+            (writer out doc `(system (new-file ,newfile))))
+          (writer out doc)
+          )))
   (write-tree
    `(,(cgi-header))))
 
