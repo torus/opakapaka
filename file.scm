@@ -1,6 +1,6 @@
 (define *link* "current")
 (define *data-dir* "data")
-(define *max-file-size* 200)
+(define *max-file-size* 10000)
 
 (define (create-new-file)
   (if (file-exists? *data-dir*)
