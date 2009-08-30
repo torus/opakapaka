@@ -1,6 +1,17 @@
-Implimenting a tiny Web-based chat system using Gauche.
+A tiny Ajax-based chat system.
+
+http://github.com/torus/webchat
 
 SETUP
 
-- chmod *.cgi to executable by HTTPd
-- chmod this directory to writable by HTTPd to create data file
+Webchat is implemented as CGI.  It runs on Apache and lighttpd.
+
+- chmod +x *.cgi
+- Set permission of this directory so that the HTTP daemon can create
+  a data directory and log files.
+- Access index.html from web browser.
+
+When you access index.html for the first time, a data diretory and a
+new log file will be generated automatically.
+
+Enjoy!

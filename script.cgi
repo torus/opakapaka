@@ -282,7 +282,8 @@
                                   "a ({href: \"http://gravatar.com\"}, \"What's this?\"),"
                                   "br (), ewrap (" inputtext "),"
                                   "p (\"[TIPS] Press Shift+Enter to add a new line.  \","
-                                  "a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\"))"
+                                  "a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\")),"
+                                  "p (a ({href: \"http://github.com/torus/webchat\"}, \"Webchat project page.\"))"
                                   ")) (" d ")")
 
                     (js-let
