@@ -98,11 +98,24 @@
            `(,(js-statement
                "D = "
                (js-function
-                (output)
+                (output update-file)
                 (js-statement "this.state = {}")
                 (js-statement "this.outtext = " (js-function (t) (js-statement output " (document.createTextNode (" t "))")))
                 (js-statement "this.out = " output "")
+                (js-statement "this.update_logfile = " update-file "")
                 ))
+             ,(js-statement
+               ;(system (new-file ,newfile))
+               "D.prototype.system="
+               (js-function
+                ()
+                (js-statement "this.update_logfile(this.newfile)"))
+               )
+             ,(js-statement
+               "D.prototype.new_file="
+               (js-function
+                (filename)
+                (js-statement "this.newfile=" filename ".data")))
              ,(js-statement
                "D.prototype.chat_entry = "
                (js-function
@@ -370,7 +383,12 @@
                              (js-statement* e "=" e ".nextSibling")
 
                              (js-let
-                              ((x `("new D (" ,out ")")))
+                              ((update-file
+                                (js-function
+                                 (newfile)
+                                 (js-statement file "=" newfile)
+                                 (js-statement pos "=0")))
+                               (x `("new D (" ,out "," ,update-file ")")))
                               (js-statement x ".evaluate (" e ")")
                               ))
 
