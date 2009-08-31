@@ -1,10 +1,13 @@
-A tiny Ajax-based chat system.
+A tiny Ajax-based chat system implemented in Scheme.
 
 http://github.com/torus/webchat
 
-SETUP
+REQUIREMENT
 
-Webchat is implemented as CGI.  It runs on Apache and lighttpd.
+- Gauche 0.8.13 or later
+- Apache or lighttpd with CGI support
+
+SETUP
 
 - chmod +x *.cgi
 - Set permission of this directory so that the HTTP daemon can create
