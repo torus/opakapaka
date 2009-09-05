@@ -115,7 +115,7 @@
                "D.prototype.new_file="
                (js-function
                 (filename)
-                (js-statement "this.newfile=" filename ".data")))
+                (js-statement "this.newfile=" filename)))
              ,(js-statement
                "D.prototype.chat_entry = "
                (js-function
@@ -149,7 +149,8 @@
                          ,td "({width: \"50\", height: \"40\", style: \"vertical-align: top\"},"
                          ,imgsrc "?" ,img "({src:" ,imgsrc "}) : null),"
                          ,td ".apply (this, [{style: \"vertical-align: top;\"},"
-                         ,span "({style: \"font-weight: bold;\"}, this.state.nickname),"
+                         ,span "({style:\"font-weight: bold;\"}, this.state.nickname),"
+			 ,span "({style:\"font-size:small;padding-left:3em\"}, this.state.date ? this.state.date.toLocaleString() : \"\"),"
                          ,br "()].concat (" ,lines_with_br "))"
                          "))) (document)")))
                    (js-statement "this.out (" e" )")))
@@ -161,6 +162,21 @@
                 (user)
                 (js-statement "this.state.nickname =" user ".nickname")
                 ))
+
+	     , (js-statement
+		"D.prototype.date="
+		(js-function
+		 (date)
+		 (js-statement "this.state.date=" date)))
+
+	     , (js-statement
+		"D.prototype.posix_time="
+		(js-function
+		 (t)
+		 (js-let
+		  ((date "new Date"))
+		  (js-statement date ".setTime(parseInt(" t ".nodeValue)*1000)")
+		  (js-statement "return " date))))
 
              ,(js-statement
                "D.prototype.user_by_nickname = "

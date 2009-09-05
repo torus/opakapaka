@@ -6,6 +6,7 @@
 (use sxml.ssax)
 (use www.cgi)
 (use text.tree)
+(use util.match)
 
 (load "./file")
 
@@ -15,7 +16,12 @@
   (sys-fcntl port F_SETLK (make <sys-flock> :type F_UNLCK))
   )
 
-(define (push-filter x) x)
+(define (push-filter x)
+  (match x
+	 (`(chat-entry . ,content)
+	  `(chat-entry
+	    (date (posix-time ,(sys-time)))
+	    . ,content))))
 
 (define (cgi-writer outport . doc)
   (with-output-to-locked-port
@@ -38,7 +44,7 @@
           (let1 newfile (create-new-file)
             (sys-unlink *link*)
             (sys-symlink newfile *link*)
-            (writer out doc `(system (new-file ,newfile))))
+            (writer out doc `(system (new-file (string ,newfile)))))
           (writer out doc)
           )))
   (write-tree
