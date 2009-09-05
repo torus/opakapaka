@@ -1,4 +1,4 @@
-#!/usr/local/bin/gosh
+#!/usr/bin/env gosh
 ; -*- scheme -*-
 
 (use www.cgi)
