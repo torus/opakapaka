@@ -8,7 +8,7 @@
           (let1 path (build-path *data-dir*
                                  (string-append "data."
                                                 (x->string (sys-time)) "."
-                                                (x->string (sys-getpid))))
+                                                (x->string (sys-getpid)) ".log"))
             (touch-file path)
             path)
           (error #`",*data-dir* is not a direcotry."))
