@@ -91,6 +91,18 @@
      ))
     ))
 
+(define-syntax js-call
+  (syntax-rules ()
+    ((_ func args ...)
+     (string-append func "(" args ... ")"))))
+
+(define-syntax js-.
+  (syntax-rules ()
+    ((_ first rest ...)
+     (fold (lambda (a b) (string-append b "." a))
+           (symbol->string 'first)
+           (list (symbol->string 'rest) ...)))))
+
 (define (main args)
   (write-tree
    `(,(cgi-header :content-type "text/javascript")
@@ -105,30 +117,30 @@
                 (js-statement "this.update_logfile = " update-file "")
                 ))
              ,(js-statement
-               ;(system (new-file ,newfile))
                "D.prototype.system="
                (js-function
                 ()
-                (js-statement "this.update_logfile(this.newfile)"))
+                (js-statement (js-call (js-. this update_logfile)
+                                       (js-. this newfile))))
                )
              ,(js-statement
                "D.prototype.new_file="
                (js-function
                 (filename)
-                (js-statement "this.newfile=" filename)))
+                (js-statement (js-. this newfile) "=" filename)))
              ,(js-statement
                "D.prototype.chat_entry = "
                (js-function
                 ()
                 (js-let
-                 ((img "make_dom_element (\"img\")")
-                  (p "make_dom_element (\"p\")")
-                  (div "make_dom_element (\"div\")")
-                  (br "make_dom_element (\"br\")")
-                  (table "make_dom_element (\"table\")")
-                  (td "make_dom_element (\"td\")")
-                  (tr "make_dom_element (\"tr\")")
-                  (span "make_dom_element (\"span\")")
+                 ((img (js-call "make_dom_element" "\"img\""))
+                  (p (js-call "make_dom_element" "\"p\""))
+                  (div (js-call "make_dom_element" "\"div\""))
+                  (br (js-call "make_dom_element" "\"br\""))
+                  (table (js-call "make_dom_element" "\"table\""))
+                  (td (js-call "make_dom_element" "\"td\""))
+                  (tr (js-call "make_dom_element" "\"tr\""))
+                  (span (js-call "make_dom_element" "\"span\""))
                   (imgsrc "this.state.avatar_image")
                   (lines "this.state.content.split (/\\r*\\n/)")
                   (lines_with_br (list "[" lines "[0]]")))
@@ -438,12 +450,12 @@
              ,(js-defun
                "sendtext" (d inputtext ul name mail text)
                (js-let
-                ((chat_entry "make_dom_element (\"chat-entry\")")
-                 (from "make_dom_element (\"from\")")
-                 (user_by_nickname "make_dom_element (\"user-by-nickname\")")
-                 (avatar_img "make_dom_element (\"avatar-image\")")
-                 (string "make_dom_element (\"string\")")
-                 (content "make_dom_element (\"content\")"))
+                ((chat_entry (js-call "make_dom_element" "\"chat-entry\""))
+                 (from (js-call "make_dom_element" "\"from\""))
+                 (user_by_nickname (js-call "make_dom_element" "\"user-by-nickname\""))
+                 (avatar_img (js-call "make_dom_element" "\"avatar-image\""))
+                 (string (js-call "make_dom_element" "\"string\""))
+                 (content (js-call "make_dom_element" "\"content\"")))
 
                 (js-if `("!(" ,name " && " ,name ".length > 0)")
                        (js-statement name " = \"Anonymous\""))
