@@ -1,4 +1,4 @@
-A tiny Ajax-based chat system implemented in Scheme.
+A tiny Ajax and comet-based chat system implemented in Scheme.
 
 http://github.com/torus/webchat
 
