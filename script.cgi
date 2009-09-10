@@ -344,7 +344,7 @@
                    (js-let
                     ((stat `(,d ".createElement (\"div\")"))
                      (statcont `(,d ".createElement (\"p\")"))
-                     (stattext `(,d ".createTextNode (\"initiazelid.  waiting for data...\")")))
+                     (stattext `(,d ".createTextNode (\"initialized.  waiting for data...\")")))
                     (js-statement statcont ".appendChild (" stattext ")")
                     (js-statement stat ".appendChild (" statcont ")")
                     (js-statement b ".appendChild (" stat ")")
@@ -452,7 +452,7 @@
                  ((avatar_elem "null"))
                  (js-if `(,mail " && " ,mail ".length > 0")
                         (js-statement avatar_elem " = " avatar_img " (" string " (\"http://www.gravatar.com/avatar/\""
-                                      "+ hex_md5 (" mail ".toLowerCase ()) + \"?s=40\"))"))
+                                      "+ hex_md5 (" mail ".toLowerCase ()) + \"?s=40&default=identicon\"))"))
 
                  (js-let
                   ((doc "document.implementation.createDocument (\"\", \"\", null)")
