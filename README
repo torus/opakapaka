@@ -1,4 +1,4 @@
-A tiny Ajax-based chat system implemented in Scheme.
+A tiny Ajax and comet-based chat system implemented in Scheme.
 
 http://github.com/torus/webchat
 
@@ -6,6 +6,11 @@ REQUIREMENTS
 
 - Gauche 0.8.13 or later
 - Apache or lighttpd with CGI support
+- Git (for downloading)
+
+DOWNLOAD
+
+ git clone git://github.com/torus/webchat.git
 
 SETUP
 
