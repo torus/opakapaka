@@ -4,6 +4,8 @@
 (use www.cgi)
 (use text.tree)
 
+(load "./file")
+
 (define (js-statement . x) (list x ";"))
 (define (js-statement* . x) x)
 (define (js-if condition . body) (list "if(" condition "){" body "}"))
@@ -299,6 +301,12 @@
                                   "br (), ewrap (" inputtext "),"
                                   "p (\"[TIPS] Press Shift+Enter to add a new line.  \","
                                   "a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\")),"
+				  "ul (" (let ((x (lambda (e) (string-append "li(a({href:\"./archive.cgi?q=" e "\"},\""
+									      e "\"))")))
+					       (files (log-files)))
+					   (fold (lambda (a b) (string-append a "," b))
+						 (x (car files))
+						 (map x (cdr files))))  "),"
                                   "p (a ({href: \"http://github.com/torus/webchat\"}, \"Webchat project page.\"))"
                                   ")) (" d ")")
 
@@ -379,7 +387,7 @@
                         ((client "new XMLHttpRequest()"))
                        (js-statement client
                                      ".open(\"GET\", \"./pull.cgi?p=\" + "
-                                     pos "+ \"&q=\" + " file ", true)")
+                                     pos "+ (" file "? \"&q=\" + " file " : \"\"), true)")
                        (js-statement client ".send(null)")
                        (js-statement
                         "" client ".onreadystatechange = "
