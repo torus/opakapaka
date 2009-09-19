@@ -4,6 +4,8 @@
 (use www.cgi)
 (use text.tree)
 
+(load "./file")
+
 (define (js-statement . x) (list x ";"))
 (define (js-statement* . x) x)
 (define (js-if condition . body) (list "if(" condition "){" body "}"))
@@ -307,11 +309,21 @@
                     (js-statement mailinput ".name = \"mailinput\"")
                     (js-statement inputtext " = textarea ({style: \"width:100%; max-width:100ex; height:10ex;\"}) (" d ")")
                     (js-statement form_elem " = (form (\"Nickname: \", ewrap (" nameinput "),"
-                                  "\"Gravatar e-mail: \", ewrap (" mailinput "),"
-                                  "a ({href: \"http://gravatar.com\"}, \"What's this?\"),"
+				  "br (),"
+                                  "\"E-mail (optional.  used only for icon): \", ewrap (" mailinput "),"
                                   "br (), ewrap (" inputtext "),"
                                   "p (\"[TIPS] Press Shift+Enter to add a new line.  \","
                                   "a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\")),"
+				  "ul (" (let ((x (lambda (e) (string-append "li(a({href:\"./archive.cgi?q=" e "\"},\""
+									      e "\"))")))
+					       (files (log-files)))
+					   (if (null? files)
+					       ""
+					       (if (null? (cdr files))
+						   (x (car files))
+						   (fold (lambda (a b) (string-append a "," b))
+							 (x (car files))
+							 (map x (cdr files))))))  "),"
                                   "p (a ({href: \"http://github.com/torus/webchat\"}, \"Webchat project page.\"))"
                                   ")) (" d ")")
 
@@ -357,7 +369,7 @@
                    (js-let
                     ((stat `(,d ".createElement (\"div\")"))
                      (statcont `(,d ".createElement (\"p\")"))
-                     (stattext `(,d ".createTextNode (\"initiazelid.  waiting for data...\")")))
+                     (stattext `(,d ".createTextNode (\"initialized.  waiting for data...\")")))
                     (js-statement statcont ".appendChild (" stattext ")")
                     (js-statement stat ".appendChild (" statcont ")")
                     (js-statement b ".appendChild (" stat ")")
@@ -392,7 +404,7 @@
                         ((client "new XMLHttpRequest()"))
                        (js-statement client
                                      ".open(\"GET\", \"./pull.cgi?p=\" + "
-                                     pos "+ \"&q=\" + " file ", true)")
+                                     pos "+ (" file "? \"&q=\" + " file " : \"\"), true)")
                        (js-statement client ".send(null)")
                        (js-statement
                         "" client ".onreadystatechange = "
@@ -465,7 +477,7 @@
                  ((avatar_elem "null"))
                  (js-if `(,mail " && " ,mail ".length > 0")
                         (js-statement avatar_elem " = " avatar_img " (" string " (\"http://www.gravatar.com/avatar/\""
-                                      "+ hex_md5 (" mail ".toLowerCase ()) + \"?s=40\"))"))
+                                      "+ hex_md5 (" mail ".toLowerCase ()) + \"?s=40&default=identicon\"))"))
 
                  (js-let
                   ((doc "document.implementation.createDocument (\"\", \"\", null)")
