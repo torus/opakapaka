@@ -94,7 +94,7 @@
 (define-syntax js-call
   (syntax-rules ()
     ((_ func args ...)
-     (string-append func "(" args ... ")"))))
+     (string-append (x->string func) "(" (x->string args) ... ")"))))
 
 (define-syntax js-.
   (syntax-rules ()
@@ -102,6 +102,14 @@
      (fold (lambda (a b) (string-append b "." a))
            (symbol->string 'first)
            (list (symbol->string 'rest) ...)))))
+
+(define-syntax define-tag
+  (syntax-rules ()
+    ((_ (name args ...) body ...)
+     (js-statement
+      "D.prototype." name "="
+      (js-function (args ...) body ...)
+      ))))
 
 (define (main args)
   (write-tree
@@ -116,31 +124,24 @@
                 (js-statement "this.out = " output "")
                 (js-statement "this.update_logfile = " update-file "")
                 ))
-             ,(js-statement
-               "D.prototype.system="
-               (js-function
-                ()
+
+             ,(define-tag ("system")
                 (js-statement (js-call (js-. this update_logfile)
                                        (js-. this newfile))))
-               )
-             ,(js-statement
-               "D.prototype.new_file="
-               (js-function
-                (filename)
-                (js-statement (js-. this newfile) "=" filename)))
-             ,(js-statement
-               "D.prototype.chat_entry = "
-               (js-function
-                ()
+
+             ,(define-tag ("new_file" filename)
+                (js-statement (js-. this newfile) "=" filename))
+
+             ,(define-tag ("chat_entry")
                 (js-let
-                 ((img (js-call "make_dom_element" "\"img\""))
-                  (p (js-call "make_dom_element" "\"p\""))
-                  (div (js-call "make_dom_element" "\"div\""))
-                  (br (js-call "make_dom_element" "\"br\""))
-                  (table (js-call "make_dom_element" "\"table\""))
-                  (td (js-call "make_dom_element" "\"td\""))
-                  (tr (js-call "make_dom_element" "\"tr\""))
-                  (span (js-call "make_dom_element" "\"span\""))
+                 ((img (js-call 'make_dom_element "\"img\""))
+                  (p (js-call 'make_dom_element "\"p\""))
+                  (div (js-call 'make_dom_element "\"div\""))
+                  (br (js-call 'make_dom_element "\"br\""))
+                  (table (js-call 'make_dom_element "\"table\""))
+                  (td (js-call 'make_dom_element "\"td\""))
+                  (tr (js-call 'make_dom_element "\"tr\""))
+                  (span (js-call 'make_dom_element "\"span\""))
                   (imgsrc "this.state.avatar_image")
                   (lines "this.state.content.split (/\\r*\\n/)")
                   (lines_with_br (list "[" lines "[0]]")))
@@ -166,7 +167,7 @@
                          ,br "()].concat (" ,lines_with_br "))"
                          "))) (document)")))
                    (js-statement "this.out (" e" )")))
-                 )))
+                 ))
 
              ,(js-statement
                "D.prototype.from = "
@@ -450,12 +451,12 @@
              ,(js-defun
                "sendtext" (d inputtext ul name mail text)
                (js-let
-                ((chat_entry (js-call "make_dom_element" "\"chat-entry\""))
-                 (from (js-call "make_dom_element" "\"from\""))
-                 (user_by_nickname (js-call "make_dom_element" "\"user-by-nickname\""))
-                 (avatar_img (js-call "make_dom_element" "\"avatar-image\""))
-                 (string (js-call "make_dom_element" "\"string\""))
-                 (content (js-call "make_dom_element" "\"content\"")))
+                ((chat_entry (js-call 'make_dom_element "\"chat-entry\""))
+                 (from (js-call 'make_dom_element "\"from\""))
+                 (user_by_nickname (js-call 'make_dom_element "\"user-by-nickname\""))
+                 (avatar_img (js-call 'make_dom_element "\"avatar-image\""))
+                 (string (js-call 'make_dom_element "\"string\""))
+                 (content (js-call 'make_dom_element "\"content\"")))
 
                 (js-if `("!(" ,name " && " ,name ".length > 0)")
                        (js-statement name " = \"Anonymous\""))
