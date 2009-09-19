@@ -308,17 +308,21 @@
                     (js-statement mailinput ".name = \"mailinput\"")
                     (js-statement inputtext " = textarea ({style: \"width:100%; max-width:100ex; height:10ex;\"}) (" d ")")
                     (js-statement form_elem " = (form (\"Nickname: \", ewrap (" nameinput "),"
-                                  "\"Gravatar e-mail: \", ewrap (" mailinput "),"
-                                  "a ({href: \"http://gravatar.com\"}, \"What's this?\"),"
+				  "br (),"
+                                  "\"E-mail (optional.  used only for icon): \", ewrap (" mailinput "),"
                                   "br (), ewrap (" inputtext "),"
                                   "p (\"[TIPS] Press Shift+Enter to add a new line.  \","
                                   "a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\")),"
 				  "ul (" (let ((x (lambda (e) (string-append "li(a({href:\"./archive.cgi?q=" e "\"},\""
 									      e "\"))")))
 					       (files (log-files)))
-					   (fold (lambda (a b) (string-append a "," b))
-						 (x (car files))
-						 (map x (cdr files))))  "),"
+					   (if (null? files)
+					       ""
+					       (if (null? (cdr files))
+						   (x (car files))
+						   (fold (lambda (a b) (string-append a "," b))
+							 (x (car files))
+							 (map x (cdr files))))))  "),"
                                   "p (a ({href: \"http://github.com/torus/webchat\"}, \"Webchat project page.\"))"
                                   ")) (" d ")")
 

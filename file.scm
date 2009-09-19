@@ -6,9 +6,11 @@
 (define *max-file-size* 10000)
 
 (define (log-files)
-  (let ((lst (directory-list *data-dir* :add-path? #t)))
-    (filter #/.log$/ lst)
-  ))
+  (if (file-is-directory? *data-dir*)
+      (let ((lst (directory-list *data-dir* :add-path? #t)))
+	(filter #/.log$/ lst)
+	)
+      ()))
 
 (define (create-new-file)
   (if (file-exists? *data-dir*)
