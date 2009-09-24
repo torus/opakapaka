@@ -54,3 +54,19 @@
                   (begin
                     (sys-sleep 1)
                     (wait-loop (+ count 1))))))))))
+
+(define (read-from-log-no-wait file pos)
+  (let ((pos (or pos 0))
+        (file (or file (get-or-prepare-log-file))))
+    (let ((port (open-input-file file)))
+        (let ((end (port-seek port 0 SEEK_END)))
+          (if (> end pos)
+              (let loop ((pos pos)
+                         (part ()))
+                (if (> end pos)
+                    (begin
+                      (port-seek port pos)
+                      (let ((exp (read port)))
+                        (loop (port-tell port) (cons exp part))))
+                    (values (reverse part) file pos)))
+              (values () file pos))))))

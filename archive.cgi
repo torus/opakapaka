@@ -9,7 +9,7 @@
 (load "./file")
 
 (define (main args)
-  (frontend read-from-log archive-filter))	
+  (frontend read-from-log-no-wait archive-filter))	
 
 (define (frontend reader filter)
   (cgi-main
