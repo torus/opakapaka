@@ -144,6 +144,7 @@
                   (td (js-call 'make_dom_element "\"td\""))
                   (tr (js-call 'make_dom_element "\"tr\""))
                   (span (js-call 'make_dom_element "\"span\""))
+                  (a (js-call 'make_dom_element "\"a\""))
                   (imgsrc "this.state.avatar_image")
                   (lines "this.state.content.split (/\\r*\\n/)")
                   (lines_with_br (list "[" lines "[0]]")))
@@ -157,19 +158,48 @@
                   (js-statement lines_with_br ".push (" lines "[" i "])")
                   )
 
-                 (js-statement
-                  (js-let
-                   ((e `("(" ,table "({style: \"width: 100%; max-width: 100ex\"},"
-                         ,tr "({style: \"background-color: rgb(200, 200, 255)\"},"
-                         ,td "({width: \"50\", height: \"40\", style: \"vertical-align: top\"},"
-                         ,imgsrc "?" ,img "({src:" ,imgsrc "}) : null),"
-                         ,td ".apply (this, [{style: \"vertical-align: top;\"},"
-                         ,span "({style:\"font-weight: bold;\"}, this.state.nickname),"
-			 ,span "({style:\"font-size:small;padding-left:3em\"}, this.state.date ? this.state.date.toLocaleString() : \"\"),"
-                         ,br "()].concat (" ,lines_with_br "))"
-                         "))) (document)")))
-                   (js-statement "this.out (" e" )")))
-                 ))
+;		 (js-statement (js-call 'alert lines_with_br))
+
+		 (js-let
+		  ((filtered "[]"))
+		  (js-for/defvar
+		   ((i "0"))
+		   (js-statement i "<" lines_with_br ".length")
+		   (js-statement* i "++")
+
+		   (let1 regexmatch ".match(/^(.*?)(http:\\/\\/[^\\s]*)(.*)$/)"
+			 (js-let
+			  ((l `(,lines_with_br "[" ,i "]")))
+			  (js-if
+			   `(,(js-call 'typeof l) "==\"string\"")
+			   (js-let
+			    ((x `(,l ,regexmatch)))
+			    `("while(" ,x "){"
+			      ,(js-statement l "=" x "[3]")
+			      ,(js-statement filtered ".push(" x "[1])")
+			      ,(js-statement filtered ".push(" a  "({href: " x "[2]}, " x "[2]))")
+			      ,(js-statement x "=" l regexmatch)
+			      "}"
+			      )))
+			  (js-statement filtered ".push(" l ")")
+			    )
+			  ))
+
+;		 (js-statement (js-call 'alert filtered))
+
+		  (js-statement
+		   (js-let
+		    ((e `("(" ,table "({style: \"width: 100%; max-width: 100ex\"},"
+			  ,tr "({style: \"background-color: rgb(200, 200, 255)\"},"
+			  ,td "({width: \"50\", height: \"40\", style: \"vertical-align: top\"},"
+			  ,imgsrc "?" ,img "({src:" ,imgsrc "}) : null),"
+			  ,td ".apply (this, [{style: \"vertical-align: top;\"},"
+			  ,span "({style:\"font-weight: bold;\"}, this.state.nickname),"
+			  ,span "({style:\"font-size:small;padding-left:3em\"}, this.state.date ? this.state.date.toLocaleString() : \"\"),"
+			  ,br "()].concat (" ,filtered "))"
+			  "))) (document)")))
+		    (js-statement "this.out (" e" )")))
+		  )))
 
              ,(js-statement
                "D.prototype.from = "
