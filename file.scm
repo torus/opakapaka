@@ -1,5 +1,6 @@
 (use srfi-1)
 (use file.util)
+(use util.match)
 
 (define *link* "current")
 (define *data-dir* "data")
@@ -34,6 +35,23 @@
         (sys-symlink file *link*)
         file)))
 
+(define (read-from-log-aux port file pos end)
+  (let loop ((pos pos)
+	     (part ()))
+    (if (> end pos)
+	(begin
+	  (port-seek port pos)
+	  (let ((exp (read port)))
+	    (let ((exp2 (match exp
+	    		      (`(chat-entry . ,content)
+	    		       `(chat-entry
+	    			 (link (file ,file) (pos ,pos))
+	    			 . ,content))
+	    		      (else exp))))
+	    (loop (port-tell port) (cons exp2 part))))
+	  )
+	(values (reverse part) file pos))))
+
 (define (read-from-log file pos)
   (let ((pos (or pos 0))
         (file (or file (get-or-prepare-log-file))))
@@ -41,14 +59,7 @@
       (let wait-loop ((count 0))
         (let ((end (port-seek port 0 SEEK_END)))
           (if (> end pos)
-              (let loop ((pos pos)
-                         (part ()))
-                (if (> end pos)
-                    (begin
-                      (port-seek port pos)
-                      (let ((exp (read port)))
-                        (loop (port-tell port) (cons exp part))))
-                    (values (reverse part) file pos)))
+	      (read-from-log-aux port file pos end)
               (if (> count 30)
                   (values () file pos)
                   (begin
@@ -61,12 +72,5 @@
     (let ((port (open-input-file file)))
         (let ((end (port-seek port 0 SEEK_END)))
           (if (> end pos)
-              (let loop ((pos pos)
-                         (part ()))
-                (if (> end pos)
-                    (begin
-                      (port-seek port pos)
-                      (let ((exp (read port)))
-                        (loop (port-tell port) (cons exp part))))
-                    (values (reverse part) file pos)))
+	      (read-from-log-aux port file pos end)
               (values () file pos))))))
