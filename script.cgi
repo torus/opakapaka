@@ -269,7 +269,7 @@
                     (js-statement args ".push (this.evaluate (" e "))")
                     )
 
-                   (js-statement "return this[" func "].apply (this," args ")")
+                   (js-statement "return this[" func "]?this[" func "].apply (this," args "):null")
                    )))
                 (js-else
                  (js-statement "return " elem "")
