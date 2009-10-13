@@ -19,7 +19,9 @@
          ,(srl:sxml->xml-noindent
            (receive (exps file pos) (reader log-file 0)
              `(*TOP* (html (head (title "log " ,file))
+			   (script "function init (x) {if (n = location.href.match(/#(.+)$/)) {alert(n[1])}}")
 			   (body
+			    (@ (onload "init()"))
 			    (ul ,@(filter exps))))))))))))
 
 (define (archive-filter exps)
@@ -31,6 +33,7 @@
 ;;;;;;;;;;;;;
 
 ; (chat-entry
+;  (link (file "data/data.1234567890.1234.log") (pos 123))
 ;  (date (posix-time 1253048216))
 ;  (from (user-by-nickname (string "とおる。"))
 ;        (avatar-image (string "http://www.gravatar.com/avatar/5efc507a8db7167e2db7889a5597a3cd?s=40&default=identicon")))
@@ -40,9 +43,13 @@
   (let ((data (fold (lambda (x p)
 		      (if x (cons x p) p))
 		    () params)))
-    `(li ,(cdr (assoc 'name data)) ": " (br) ,@(cdr (assoc 'content data)))
+    `(li (@ (id ,(string-append "e" (cdr (assoc 'pos data)))))
+      (a (@ (name ,(cdr (assoc 'pos data)))))
+	 ,(cdr (assoc 'name data)) ": " (br) ,@(cdr (assoc 'content data)))
   ))
-
+(define (link file p) (cons 'pos p))
+(define (file x) x)
+(define (pos p) (x->string p))
 (define (date x) #f)
 (define (posix-time x) #f)
 (define (from . params)
