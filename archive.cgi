@@ -19,7 +19,7 @@
          ,(srl:sxml->xml-noindent
            (receive (exps file pos) (reader log-file 0)
              `(*TOP* (html (head (title "log " ,file))
-			   (script "function init (x) {if (n = location.href.match(/#(.+)$/)) {alert(n[1])}}")
+			   (script "function init (x) {if (n = location.href.match(/#(.+)$/)) {document.getElementById('e'+n[1]).style.backgroundColor='#ffcccc'}}")
 			   (body
 			    (@ (onload "init()"))
 			    (ul ,@(filter exps))))))))))))
