@@ -89,7 +89,8 @@
 			  ,imgsrc "?" ,img "({src:" ,imgsrc "}) : null),"
 			  ,td ".apply (this, [{style: \"vertical-align: top;\"},"
 			  ,span "({style:\"font-weight: bold;\"}, this.state.nickname),"
-			  ,span "({style:\"font-size:small;padding-left:3em\"}, this.state.date ? this.state.date.toLocaleString() : \"\"),"
+			  ,span "({style:\"font-size:small;padding-left:3em\"}, "
+			  "(this.state.date ? (this.state.link?" ,a "({href:this.state.link},this.state.date.toLocaleString()):this.state.date.toLocaleString()) : \"\")),"
 			  ,br "()].concat (" ,filtered "))"
 			  "))) (document)")))
 		    (js-statement "this.out (" e" )")))
@@ -116,6 +117,15 @@
 		  ((date "new Date"))
 		  (js-statement date ".setTime(parseInt(" t ".nodeValue)*1000)")
 		  (js-statement "return " date))))
+
+	     ,(define-tag ("link" file pos)
+		(js-statement "this.state.link=\"./archive.cgi?q=\"+" file "+\"#\"+" pos))
+
+	     ,(define-tag ("file" elem)
+		(js-statement "return " elem " ? " elem ".nodeValue : \"\""))
+
+	     ,(define-tag ("pos" elem)
+		(js-statement "return " elem " ? " elem ".nodeValue : \"\""))
 
              ,(js-statement
                "D.prototype.user_by_nickname = "
