@@ -24,30 +24,29 @@
 	    . ,content))))
 
 (define (cgi-writer outport . doc)
-  (with-output-to-locked-port
-   outport
-   (lambda ()
-     (for-each (lambda (e)
-                 (newline)              ; First, write a newline
-                 (write e)) ; Then, add a item so that the file always ends with ")"
-               doc)
-     ))
-  )
+  (for-each (lambda (e)
+	      (newline)              ; First, write a newline
+	      (write e)) ; Then, add a item so that the file always ends with ")"
+	    doc))
 
 (define (frontend writer)
   (let* ((port (current-input-port))
          (doc (ssax:xml->sxml port ()))
 	 (file (get-or-prepare-log-file))
          (out (open-output-file file :if-exists :append))
-	 (pos (port-seek out 0 SEEK_END)))
-    (let ((doc (push-filter (cadr doc))))
-      (if (> pos *max-file-size*)
-	  (let1 newfile (create-new-file)
-		(sys-unlink *link*)
-		(sys-symlink newfile *link*)
-		(writer out doc `(system (new-file (string ,newfile)))))
-	  (writer out doc)
-	  )))
+	 )
+    (with-output-to-locked-port
+     out
+     (lambda ()
+       (let ((pos (port-seek out 0 SEEK_END))
+	     (doc (push-filter (cadr doc))))
+	 (if (> pos *max-file-size*)
+	     (let1 newfile (create-new-file)
+		   (sys-unlink *link*)
+		   (sys-symlink newfile *link*)
+		   (writer out doc `(system (new-file (string ,newfile)))))
+	     (writer out doc)
+	     )))))
   (write-tree
    `(,(cgi-header))))
 
