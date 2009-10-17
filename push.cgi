@@ -16,12 +16,15 @@
   (sys-fcntl port F_SETLK (make <sys-flock> :type F_UNLCK))
   )
 
-(define (push-filter x)
-  (match x
+(define (add-date doc)
+  (match doc
 	 (`(chat-entry . ,content)
 	  `(chat-entry
 	    (date (posix-time ,(sys-time)))
 	    . ,content))))
+
+(define (push-filter x)
+  (add-date x))
 
 (define (cgi-writer outport . doc)
   (for-each (lambda (e)
