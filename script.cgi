@@ -248,17 +248,8 @@
                                   "br (), ewrap (" inputtext "),"
                                   "p (\"[TIPS] Press Shift+Enter to add a new line.  \","
                                   "a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\")),"
-				  "ul (" (let ((x (lambda (e) (string-append "li(a({href:\"./archive.cgi?q=" e "\"},\""
-									      e "\"))")))
-					       (files (log-files)))
-					   (if (null? files)
-					       ""
-					       (if (null? (cdr files))
-						   (x (car files))
-						   (fold (lambda (a b) (string-append a "," b))
-							 (x (car files))
-							 (map x (cdr files))))))  "),"
-                                  "p (a ({href: \"http://github.com/torus/webchat\"}, \"Webchat project page.\"))"
+				  "p (a ({href: \"./archive.cgi\"}, \"Log archive\")), "
+                                  "p (a ({href: \"http://github.com/torus/webchat\"}, \"http://github.com/torus/webchat\"))"
                                   ")) (" d ")")
 
                     (js-let
