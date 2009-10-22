@@ -9,6 +9,7 @@
 (use util.match)
 
 (load "./file")
+(load "./push-filter")
 
 (define (with-output-to-locked-port port thunk)
   (sys-fcntl port F_SETLKW (make <sys-flock> :type F_WRLCK))
@@ -24,7 +25,8 @@
 	    . ,content))))
 
 (define (push-filter x)
-  (add-date x))
+  (let ((addr (or (cgi-get-metavariable "REMOTE_ADDR") "?")))
+    (add-date ((eval x (find-module 'push-filter)) `((src-addr ,addr))))))
 
 (define (cgi-writer outport . doc)
   (for-each (lambda (e)

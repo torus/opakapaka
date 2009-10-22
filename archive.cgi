@@ -70,3 +70,5 @@
 (define (string x) x)
 (define (avatar-image x) #f)
 (define (content x) (cons 'content (intersperse '(br) (string-split x #\newline))))
+(define (system x) #f)
+(define (new-file x) #f)
