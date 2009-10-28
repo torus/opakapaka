@@ -4,6 +4,7 @@
 (define (js-else-if condition . body) (list "else" " " (apply js-if condition body)))
 (define (js-else . body) (list "else{" body "}"))
 (define (js-with obj . body) (list "with(" obj "){" body "}"))
+(define (js-?: x y z) (list "((" x ")?(" y "):(" z "))"))
 
 (define-syntax js-let
   (syntax-rules ()

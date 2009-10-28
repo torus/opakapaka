@@ -27,7 +27,7 @@
 
              ,(define-tag ("new_file" filename)
                 (js-statement (js-. this newfile) "=" filename))
-
+             ,(js-statement "PREVIOUS_USER=null")
              ,(define-tag ("chat_entry")
                 (js-let
                  ((img (js-call 'make_dom_element "\"img\""))
@@ -80,20 +80,30 @@
 			  ))
 
 ;		 (js-statement (js-call 'alert filtered))
+                  ;; (js-statement (js-call 'alert "PREVIOUS_USER"))
 
 		  (js-statement
 		   (js-let
-		    ((e `("(" ,table "({style: \"width: 100%; max-width: 100ex\"},"
-			  ,tr "({style: \"background-color: rgb(200, 200, 255)\"},"
-			  ,td "({width: \"50\", height: \"40\", style: \"vertical-align: top\"},"
-			  ,imgsrc "?" ,img "({src:" ,imgsrc "}) : null),"
-			  ,td ".apply (this, [{style: \"vertical-align: top;\"},"
-			  ,span "({style:\"font-weight: bold;\"}, this.state.nickname),"
-			  ,span "({style:\"font-size:small;padding-left:3em\"}, "
-			  "(this.state.date ? (this.state.link?" ,a "({href:this.state.link},this.state.date.toLocaleString()):this.state.date.toLocaleString()) : \"\")),"
-			  ,br "()].concat (" ,filtered "))"
-			  "))) (document)")))
-		    (js-statement "this.out (" e" )")))
+		    ((prev '("PREVIOUS_USER"))
+                     (new `("this.state.nickname + " ,imgsrc))
+                     (e (js-?: `(,prev "!=" ,new)
+                               `("(" ,table "({style: \"width: 100%; max-width: 100ex\"},"
+                                 ,tr "({style: \"background-color: rgb(200, 200, 255)\"},"
+                                 ,td "({width: \"50\", height: \"40\", style: \"vertical-align: top\"},"
+                                 ,imgsrc "?" ,img "({src:" ,imgsrc "}) : null),"
+                                 ,td ".apply (this, [{style: \"vertical-align: top;\"},"
+                                 ,span "({style:\"font-weight: bold;\"}, this.state.nickname),"
+                                 ,span "({style:\"font-size:small;padding-left:3em\"}, "
+                                 "(this.state.date ? (this.state.link?" ,a "({href:this.state.link},this.state.date.toLocaleString()):this.state.date.toLocaleString()) : \"\")),"
+                                 ,br "()].concat (" ,filtered "))"
+                                 "))) (document)")
+                               `("(" ,table "({style: \"width: 100%; max-width: 100ex\"},"
+                                 ,tr "({style: \"background-color: rgb(200, 200, 255)\"},"
+                                 ,td "({width: \"50\", height: \"40\", style: \"vertical-align: top\"}),"
+                                 ,td ".apply (this, [{style: \"vertical-align: top;\"}].concat (" ,filtered "))"
+                                 "))) (document)"))))
+		    (js-statement "this.out (" e" )")
+                    (js-statement "PREVIOUS_USER=" new)))
 		  )))
 
              ,(js-statement
