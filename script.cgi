@@ -88,7 +88,7 @@
                      (new `("this.state.nickname + " ,imgsrc))
                      (e (js-?: `(,prev "!=" ,new)
                                `("(" ,table "({style: \"width: 100%; max-width: 100ex\"},"
-                                 ,tr "({style: \"background-color: rgb(200, 200, 255)\"},"
+                                 ,tr "({style: \"background-color: rgb(230, 230, 255)\"},"
                                  ,td "({width: \"50\", height: \"40\", style: \"vertical-align: top\"},"
                                  ,imgsrc "?" ,img "({src:" ,imgsrc "}) : null),"
                                  ,td ".apply (this, [{style: \"vertical-align: top;\"},"
@@ -98,8 +98,8 @@
                                  ,br "()].concat (" ,filtered "))"
                                  "))) (document)")
                                `("(" ,table "({style: \"width: 100%; max-width: 100ex\"},"
-                                 ,tr "({style: \"background-color: rgb(200, 200, 255)\"},"
-                                 ,td "({width: \"50\", height: \"40\", style: \"vertical-align: top\"}),"
+                                 ,tr "({style: \"background-color: rgb(230, 230, 255)\"},"
+                                 ,td "({width: \"50\", style: \"vertical-align: top\"}),"
                                  ,td ".apply (this, [{style: \"vertical-align: top;\"}].concat (" ,filtered "))"
                                  "))) (document)"))))
 		    (js-statement "this.out (" e" )")
