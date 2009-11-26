@@ -1,0 +1,37 @@
+
+(use gauche.test)
+
+(test-start "JavaScript generator")
+
+(load "js")
+(import js)
+
+(test-module 'js)
+
+(test* "join" "a,b,c" ((with-module js join) '|,| '(a b c)))
+(test* "string" "\"hello\"" (js "hello"))
+(test* "." "a.b" (js `(a .. b)))
+(test* "." "a.b.c" (js `(a .. b .. c)))
+(test* "var" "var x" (js '(var x)))
+(test* "var init" "var x=100;" (js '(var x = 100 //)))
+(test* "return" "return x;" (js '(return x //)))
+(test* "unary" "a" (js 'a))
+(test* "unary operator" "+a" (js '(+ a)))
+(test* "binary operator" "a+b" (js '(a + b)))
+(test* "paren" "(a)" (js '(() a)))
+(test* "empty paren" "()" (js '(())))
+(test* "paren" "a*(b+c)" (js '(a * (() b + c))))
+(test* "square bracket" "[x]" (js '(<> x)))
+(test* "array access" "arr[i]" (js '(arr (<> i))))
+(test* "array literal" "var x=[]" (js '(var x = (<>))))
+(test* "funcall" "func(a,b,c)" (js '(func -> a b c)))
+(test* "funcall statement" "func(a,b,c);" (js '((func -> a b c) //)))
+(test* "for" "for(var i=0;i<5;i++){func(i);}" (js '(for (var i = 0 // i < 5 // i ++) (func -> i) //)))
+(test* "for-in" "for(var i in obj){func(i);}" (js '(for (var i in obj) (func -> i) //)))
+(test* "while" "while(x>10){func(x);}" (js '(while (x > 10) (func -> x) //)))
+(test* "function" "function(x){return x+1;}" (js '(function (x) return x + 1 //)))
+(test* "thunk" "function(){a=b;}" (js '(function () a = b //)))
+(test* "named function" "function funcname(x,y){return x+1;}" (js '(function funcname (x y) return x + 1 //)))
+(test* "funcall in func" "function(){func();}" (js '(function () (func ->) //)))
+
+(test-end)
