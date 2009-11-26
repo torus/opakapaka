@@ -22,11 +22,11 @@
                 ))
 
              ,(define-tag ("system")
-                (js-statement (js-call (js-. this update_logfile)
-                                       (js-. this newfile))))
+                (js-statement (js-call (js-. 'this 'update_logfile)
+                                       (js-. 'this 'newfile))))
 
              ,(define-tag ("new_file" filename)
-                (js-statement (js-. this newfile) "=" filename))
+                (js-statement (js-. 'this 'newfile) "=" filename))
              ,(js-statement "PREVIOUS_USER=null")
              ,(define-tag ("chat_entry")
                 (js-let

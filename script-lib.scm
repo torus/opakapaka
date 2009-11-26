@@ -86,17 +86,20 @@
      ))
     ))
 
-(define-syntax js-call
-  (syntax-rules ()
-    ((_ func args ...)
-     (string-append (x->string func) "(" (x->string args) ... ")"))))
+(define (js-call func . args)
+  (apply string-append `(,(x->string func) "(" ,@(map x->string args) ")")))
 
-(define-syntax js-.
+#;(define-syntax js-.
   (syntax-rules ()
     ((_ first rest ...)
      (fold (lambda (a b) (string-append b "." a))
            (symbol->string 'first)
            (list (symbol->string 'rest) ...)))))
+
+(define (js-. first . rest)
+  (fold (lambda (a b) (string-append b "." a))
+        (x->string first)
+        (map x->string rest)))
 
 (define-syntax define-tag
   (syntax-rules ()
