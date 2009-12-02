@@ -15,7 +15,7 @@
 (define-syntax js-let-helper
   (syntax-rules ()
     ((_ ((var init) ...) () body ...)
-     (let ((var (string-append "$" (symbol->string (gensym)))) ...)
+     (let ((var (string->symbol (string-append "$" (symbol->string (gensym))))) ...)
        (list (js-multi-defver (var init) ...)
              body ...)))
     ((_ (part ...) ((var init) rest ...) body ...)
