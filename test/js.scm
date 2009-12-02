@@ -26,6 +26,7 @@
 (test* "array literal" "var x=[]" (js '(var x = (<>))))
 (test* "funcall" "func(a,b,c)" (js '(func -> a b c)))
 (test* "funcall statement" "func(a,b,c);" (js '((func -> a b c) //)))
+(test* "if" "if(co){body();}" (js '(if (co) (body ->) //)))
 (test* "for" "for(var i=0;i<5;i++){func(i);}" (js '(for (var i = 0 // i < 5 // i ++) (func -> i) //)))
 (test* "for-in" "for(var i in obj){func(i);}" (js '(for (var i in obj) (func -> i) //)))
 (test* "while" "while(x>10){func(x);}" (js '(while (x > 10) (func -> x) //)))

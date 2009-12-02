@@ -39,6 +39,8 @@
           (js `(|(| ,x |)|)))
          (`(<> ,x ...)
           #`"[,(js x)]")
+         (`(if (,condition ...) ,body ...)
+          #`"if,(js `((() ,condition) |{| ,body |}|))")
          (`(for (,stmt ...) ,body ...)
           #`"for,(js `((() ,stmt) |{| ,body |}|))")
          (`(while (,expr ...) ,body ...)
