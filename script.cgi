@@ -4,8 +4,12 @@
 (use www.cgi)
 (use text.tree)
 
-(load "./file")
-(load "./script-lib")
+(add-load-path ".")
+
+(load "file")
+(load "script-lib")
+
+(use js)
 
 (define (main args)
   (write-tree
@@ -213,8 +217,20 @@
                (js-let
                 ((d "document")
                  (b `(,d ".body"))
+                 (unread-count)
+                 (active 'true)
+                 (orig-title (js `(,d .. title)))
                  (tags "[\"h1\", \"h2\", \"ul\", \"li\", \"form\", \"input\", \"textarea\", \"div\", \"p\", \"br\", \"a\"]")
                  (env "{}"))
+
+                (js `(window.onblur = (function
+                                       ()
+                                       ,unread-count = 0 //
+                                       ,active = false //
+                                       window.onfocus = (function
+                                                         ()
+                                                         ,d .. title = ,orig-title //
+                                                         ,active = true //) //) //))
 
                 (js-for/iter
                  (i -> tags)
@@ -241,17 +257,22 @@
                                          (js-statement x ".style.clear = \"both\"")
                                          (js-statement x ".appendChild (" t ")")
                                          (js-statement ul ".appendChild (" x ")")
+                                         (js `(if (! ,active)
+                                                  ,unread-count ++ //
+                                                  ,d .. title = "[" + ,unread-count + "] " + ,orig-title //))
                                          ))))
 
                   (js-let
                    ((form_elem) (nameinput) (mailinput) (inputtext))
                    (js-with
                     env
-                    (js-statement nameinput " = input ({type: \"text\", size: \"20\"}) (" d ")")
-                    (js-statement nameinput ".name = \"nameinput\"")
-                    (js-statement mailinput " = input ({type: \"text\", size: \"50\"}) (" d ")")
-                    (js-statement mailinput ".name = \"mailinput\"")
-                    (js-statement inputtext " = textarea ({style: \"width:100%; max-width:100ex; height:10ex;\"}) (" d ")")
+                    (js `(,nameinput = ((input -> (^^ (type "text") (size "20"))) -> ,d) //))
+                    (js `(,nameinput .. name = "nameinput" //))
+                    (js `(,mailinput = ((input -> (^^ (type "text") (size "50"))) -> ,d) //))
+                    (js `(,mailinput .. name = "mailinput" //))
+                    (js `(,inputtext = ((textarea
+                                         -> (^^ (style "width:100%; max-width:100ex; height:10ex;")))
+                                        -> ,d) //))
                     (js-statement form_elem " = (form (\"Nickname: \", ewrap (" nameinput "),"
 				  "br (),"
                                   "\"E-mail (optional.  used only for icon): \", ewrap (" mailinput "),"
