@@ -23,6 +23,8 @@
 (test* "paren" "a*(b+c)" (js '(a * (() b + c))))
 (test* "square bracket" "[x]" (js '(<> x)))
 (test* "array access" "arr[i]" (js '(arr (<> i))))
+(test* "object initializer" "{a:b,c:d}" (js '(^^ (a b) (c d))))
+(test* "object initializer" "{a:\"b\",c:123}" (js '(^^ (a "b") (c 123))))
 (test* "array literal" "var x=[]" (js '(var x = (<>))))
 (test* "funcall" "func(a,b,c)" (js '(func -> a b c)))
 (test* "funcall statement" "func(a,b,c);" (js '((func -> a b c) //)))

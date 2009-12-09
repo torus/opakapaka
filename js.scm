@@ -39,6 +39,11 @@
           (js `(|(| ,x |)|)))
          (`(<> ,x ...)
           #`"[,(js x)]")
+         (`(^^ ,pairs ...)
+          (string-append "{"
+                         (join "," (map (lambda (p)
+                                          (js `(,(car p) |:| ,(cadr p)))
+                                          ) pairs)) "}"))
          (`(if (,condition ...) ,body ...)
           #`"if,(js `((() ,condition) |{| ,body |}|))")
          (`(for (,stmt ...) ,body ...)
