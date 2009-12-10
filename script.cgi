@@ -56,8 +56,6 @@
                   (js-statement lines_with_br ".push (" lines "[" i "])")
                   )
 
-;		 (js-statement (js-call 'alert lines_with_br))
-
 		 (js-let
 		  ((filtered "[]"))
 		  (js-for/defvar
@@ -82,9 +80,6 @@
 			  (js-statement filtered ".push(" l ")")
 			    )
 			  ))
-
-;		 (js-statement (js-call 'alert filtered))
-                  ;; (js-statement (js-call 'alert "PREVIOUS_USER"))
 
 		  (js-statement
 		   (js-let
@@ -273,15 +268,24 @@
                     (js `(,inputtext = ((textarea
                                          -> (^^ (style "width:100%; max-width:100ex; height:10ex;")))
                                         -> ,d) //))
-                    (js-statement form_elem " = (form (\"Nickname: \", ewrap (" nameinput "),"
-				  "br (),"
-                                  "\"E-mail (optional.  used only for icon): \", ewrap (" mailinput "),"
-                                  "br (), ewrap (" inputtext "),"
-                                  "p (\"[TIPS] Press Shift+Enter to add a new line.  \","
-                                  "a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\")),"
-				  "p (a ({href: \"./archive.cgi\"}, \"Log archive\")), "
-                                  "p (a ({href: \"http://github.com/torus/webchat\"}, \"http://github.com/torus/webchat\"))"
-                                  ")) (" d ")")
+                    (js `(,form_elem = ((form -> "Nickname: " (ewrap -> ,nameinput)
+                                             (br ->) "E-mail (optional.  used only for icon): " (ewrap -> ,mailinput)
+                                             (br ->) (ewrap -> ,inputtext)
+                                             (p -> "[TIPS] Press Shift+Enter to add a new line.  "
+                                                (a -> (^^ (href "http://gravatar.com")) "Get a Gravatar account to show your icon."))
+                                             (p -> (a -> (^^ (href "./archive.cgi")) "Log archive"))
+                                             (p -> (a -> (^^ (href "http://github.com/torus/webchat")) "http://github.com/torus/webchat")))
+                                        -> ,d) //))
+
+                    ;; (js-statement form_elem " = (form (\"Nickname: \", ewrap (" nameinput "),"
+		    ;;     	  "br (),"
+                    ;;               "\"E-mail (optional.  used only for icon): \", ewrap (" mailinput "),"
+                    ;;               "br (), ewrap (" inputtext "),"
+                    ;;               "p (\"[TIPS] Press Shift+Enter to add a new line.  \","
+                    ;;               "a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\")),"
+		    ;;     	  "p (a ({href: \"./archive.cgi\"}, \"Log archive\")), "
+                    ;;               "p (a ({href: \"http://github.com/torus/webchat\"}, \"http://github.com/torus/webchat\"))"
+                    ;;               ")) (" d ")")
 
                     (js-let
                      ((cookied_inputs `("{nameinput: " ,nameinput ", mailinput: " ,mailinput "}")))
@@ -319,7 +323,7 @@
                        ))
                      ))
 
-                   (js-statement form_elem ".onsubmit = " (js-function () (js-statement "return false")))
+                   (js `(,form_elem .. onsubmit = (function () return false //) //))
                    (js-statement b ".appendChild (" form_elem ")")
 
                    (js-let
