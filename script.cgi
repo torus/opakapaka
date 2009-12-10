@@ -277,16 +277,6 @@
                                              (p -> (a -> (^^ (href "http://github.com/torus/webchat")) "http://github.com/torus/webchat")))
                                         -> ,d) //))
 
-                    ;; (js-statement form_elem " = (form (\"Nickname: \", ewrap (" nameinput "),"
-		    ;;     	  "br (),"
-                    ;;               "\"E-mail (optional.  used only for icon): \", ewrap (" mailinput "),"
-                    ;;               "br (), ewrap (" inputtext "),"
-                    ;;               "p (\"[TIPS] Press Shift+Enter to add a new line.  \","
-                    ;;               "a ({href: \"http://gravatar.com\"}, \"Get a Gravatar account to show your icon.\")),"
-		    ;;     	  "p (a ({href: \"./archive.cgi\"}, \"Log archive\")), "
-                    ;;               "p (a ({href: \"http://github.com/torus/webchat\"}, \"http://github.com/torus/webchat\"))"
-                    ;;               ")) (" d ")")
-
                     (js-let
                      ((cookied_inputs `("{nameinput: " ,nameinput ", mailinput: " ,mailinput "}")))
                      (js-for/iter
