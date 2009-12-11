@@ -27,6 +27,7 @@
 (test* "object initializer" "{a:\"b\",c:123}" (js '(^^ (a "b") (c 123))))
 (test* "array literal" "var x=[]" (js '(var x = (<>))))
 (test* "funcall" "func(a,b,c)" (js '(func -> a b c)))
+(test* "funcall dotted" "func(a,b.c,d.e)" (js '(func -> a (b .. c) (d .. e))))
 (test* "funcall statement" "func(a,b,c);" (js '((func -> a b c) //)))
 (test* "if" "if(co){body();}" (js '(if (co) (body ->) //)))
 (test* "for" "for(var i=0;i<5;i++){func(i);}" (js '(for (var i = 0 // i < 5 // i ++) (func -> i) //)))
