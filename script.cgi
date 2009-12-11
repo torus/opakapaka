@@ -258,19 +258,21 @@
                                          ))))
 
                   (js-let
-                   ((form_elem) (nameinput) (mailinput) (inputtext))
+                   ((form_elem) (nameinput) (mailinput) (inputtext) (submit))
                    (js-with
                     env
                     (js `(,nameinput = ((input -> (^^ (type "text") (size "20"))) -> ,d) //))
                     (js `(,nameinput .. name = "nameinput" //))
-                    (js `(,mailinput = ((input -> (^^ (type "text") (size "50"))) -> ,d) //))
+                    (js `(,mailinput = ((input -> (^^ (type "text") (size "40"))) -> ,d) //))
                     (js `(,mailinput .. name = "mailinput" //))
+                    (js `(,submit = ((input -> (^^ (type "submit") (value "say"))) -> ,d) //))
                     (js `(,inputtext = ((textarea
                                          -> (^^ (style "width:100%; max-width:100ex; height:10ex;")))
                                         -> ,d) //))
                     (js `(,form_elem = ((form -> "Nickname: " (ewrap -> ,nameinput)
                                              (br ->) "E-mail (optional.  used only for icon): " (ewrap -> ,mailinput)
                                              (br ->) (ewrap -> ,inputtext)
+                                             (br ->) (ewrap -> ,submit)
                                              (p -> "[TIPS] Press Shift+Enter to add a new line.  "
                                                 (a -> (^^ (href "http://gravatar.com")) "Get a Gravatar account to show your icon."))
                                              (p -> (a -> (^^ (href "./archive.cgi")) "Log archive"))
@@ -313,7 +315,16 @@
                        ))
                      ))
 
-                   (js `(,form_elem .. onsubmit = (function () return false //) //))
+                   (js `(,form_elem .. onsubmit =
+                                    (function
+                                     ()
+                                     var text = ,inputtext .. value //
+                                     (if (text.length > 0)
+                                         ,inputtext .. value = "" //
+                                         (sendtext -> ,d ,inputtext ,ul
+                                                   (,nameinput .. value) (,mailinput .. value) text) //
+                                         )
+                                              return false //) //))
                    (js-statement b ".appendChild (" form_elem ")")
 
                    (js-let
@@ -336,12 +347,7 @@
                        (ev)
                        (js-if
                         `(,ev ".keyCode == 13 && !" ,ev ".shiftKey")
-                        (js-let
-                         ((text `(,inputtext ".value")))
-                         (js-statement inputtext ".value = \"\"")
-                         (js-statement "sendtext (" d ", " inputtext ", " ul ", " nameinput ".value, " mailinput ".value, " text ")")
-                         (js-statement "return false")
-                         )
+                        (js `(return (,form_elem .. (onsubmit ->)) //))
                         )))
 
                      (js-let
