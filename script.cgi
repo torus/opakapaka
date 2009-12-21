@@ -310,7 +310,10 @@
 
                          (js-let
                           ((e `( ,cookied_inputs "[" ,key "]")))
-                          (js-if e (js-statement e ".value = unescape (" val ")"))
+                          (js-if e
+                                 (js-statement e ".value = unescape (" val ")")
+                                 (js `(((,e .. onchange) ->) //))
+                                 #;(js `((alert -> ,e) //)))
                           )))
                        ))
                      ))
