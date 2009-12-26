@@ -1,8 +1,8 @@
-webchat
-=======
+OPAKAPAKA
+=========
 
 A tiny Ajax and comet-based chat system implemented in Scheme.
-Visit the [project page on github.com](http://github.com/torus/webchat).
+Visit the [project page on github.com](http://github.com/torus/opakapaka).
 
 REQUIREMENTS
 ------------
@@ -14,7 +14,7 @@ REQUIREMENTS
 DOWNLOAD
 --------
 
- git clone git://github.com/torus/webchat.git
+ git clone git://github.com/torus/opakapaka.git
 
 SETUP
 -----
