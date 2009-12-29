@@ -8,6 +8,9 @@
 
 (load "file")
 (load "script-lib")
+(load "config")
+
+(load "opakapaka.conf.cgi")
 
 (use js)
 
@@ -235,8 +238,8 @@
 
                 (js-with
                  env
-                 (js-let ((head `("(h1 (\"Web chat\")) (" ,d ")")))
-                         (js-statement b ".appendChild (" head ")")
+                 (js-let ((head (js `((h1 -> ,(config-get 'title)) -> ,d))))
+                         (js `((,b .. appendChild) -> ,head))
                          ))
 
                 (js-let
@@ -276,7 +279,7 @@
                                              (p -> "[TIPS] Press Shift+Enter to add a new line.  "
                                                 (a -> (^^ (href "http://gravatar.com")) "Get a Gravatar account to show your icon."))
                                              (p -> (a -> (^^ (href "./archive.cgi")) "Log archive"))
-                                             (p -> (a -> (^^ (href "http://github.com/torus/webchat")) "http://github.com/torus/webchat")))
+                                             (p -> "Powered by " (a -> (^^ (href "http://github.com/torus/opakapala")) "Opakapaka chat system")))
                                         -> ,d) //))
 
                     (js-let
@@ -396,10 +399,11 @@
                             (js-let
                              ((scrollY "window.pageYOffset || document.body.scrollTop")
                               (threshold "getDocHeight () - window.innerHeight * 1.5"))
-                             (js-statement updatestat " (\"new pos = \" + " pos
+                             #;(js-statement updatestat " (\"new pos = \" + " pos
                                            " + \" file = \" + " file
                                            " + \" scrollY = \" + " scrollY
                                            " + \" threshold = \" + " threshold ")")
+                             (js `((,updatestat -> ("last updated: " + ((((new Date) ->) .. toLocaleString) ->))) //))
                              (js-if
                               `(,initial " || " ,scrollY " > " ,threshold )
                               (js-statement initial " = false")
