@@ -26,6 +26,7 @@
 (define (js code)
   (match code
          ('var "var ")
+         ('new "new ")
          ('in " in ")
          ('return "return ")
          ('// ";")

@@ -14,6 +14,8 @@
 (test* "." "a.b.c" (js `(a .. b .. c)))
 (test* "var" "var x" (js '(var x)))
 (test* "var init" "var x=100;" (js '(var x = 100 //)))
+(test* "new" "new Date" (js '(new Date)))
+(test* "new w/ args" "new Date(12345)" (js '((new Date) -> 12345)))
 (test* "return" "return x;" (js '(return x //)))
 (test* "unary" "a" (js 'a))
 (test* "unary operator" "+a" (js '(+ a)))
