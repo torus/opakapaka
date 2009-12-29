@@ -27,6 +27,11 @@ SETUP
 When you access index.html for the first time, a data diretory and a
 new log file will be generated automatically.
 
+CONFIGURATION
+-------------
+
+Edit opakapaka.conf.cgi.
+
 LICENSE
 -------
 
