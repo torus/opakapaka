@@ -40,6 +40,6 @@ Same as Gauche (BSD license).
 AUTHOR
 ------
 
-Toru Hisai &lt;toru at torus dot jp&gt;
+Toru Hisai &lt;toru at torus dot jp&gt; Twitter: [@torus](http://twitter.com/torus)
 
 Enjoy!
