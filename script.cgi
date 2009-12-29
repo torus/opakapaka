@@ -279,7 +279,7 @@
                                              (p -> "[TIPS] Press Shift+Enter to add a new line.  "
                                                 (a -> (^^ (href "http://gravatar.com")) "Get a Gravatar account to show your icon."))
                                              (p -> (a -> (^^ (href "./archive.cgi")) "Log archive"))
-                                             (p -> "Powered by " (a -> (^^ (href "http://github.com/torus/opakapala")) "Opakapaka chat system")))
+                                             (p -> "Powered by " (a -> (^^ (href "http://github.com/torus/opakapaka")) "Opakapaka chat system")))
                                         -> ,d) //))
 
                     (js-let
