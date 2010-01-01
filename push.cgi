@@ -8,8 +8,13 @@
 (use text.tree)
 (use util.match)
 
-(load "./file")
-(load "./push-filter")
+(add-load-path ".")
+
+(load "file")
+(load "push-filter")
+(load "config")
+
+(load "opakapaka.conf.cgi")
 
 (define (with-output-to-locked-port port thunk)
   (sys-fcntl port F_SETLKW (make <sys-flock> :type F_WRLCK))
@@ -45,10 +50,10 @@
      (lambda ()
        (let ((pos (port-seek out 0 SEEK_END))
 	     (doc (push-filter (cadr doc))))
-	 (if (> pos *max-file-size*)
+	 (if (> pos (max-file-size))
 	     (let1 newfile (create-new-file)
-		   (sys-unlink *link*)
-		   (sys-symlink newfile *link*)
+		   (sys-unlink (current-link))
+		   (sys-symlink newfile (current-link))
 		   (writer out doc `(system (new-file (string ,newfile)))))
 	     (writer out doc)
 	     )))))
