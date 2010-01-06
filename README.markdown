@@ -27,6 +27,11 @@ SETUP
 When you access index.html for the first time, a data diretory and a
 new log file will be generated automatically.
 
+CONFIGURATION
+-------------
+
+Edit opakapaka.conf.cgi.
+
 LICENSE
 -------
 
@@ -35,6 +40,6 @@ Same as Gauche (BSD license).
 AUTHOR
 ------
 
-Toru Hisai &lt;toru at torus dot jp&gt;
+Toru Hisai &lt;toru at torus dot jp&gt; Twitter: [@torus](http://twitter.com/torus)
 
 Enjoy!
