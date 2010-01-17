@@ -15,12 +15,23 @@
    (lambda (params)
      (let ((last-pos (let1 p (cgi-get-parameter "p" params)
                        (and p (string->number p))))
-           (log-file (cgi-get-parameter "q" params)))
-       `(,(cgi-header :content-type "text/xml")
-         ,(srl:sxml->xml-noindent
-           (receive (exps file pos) (reader log-file last-pos)
-             `(*TOP* (res (pos ,pos)
-                          (file ,file)
-                          (content ,@(filter exps)))))))))))
+           (log-file (cgi-get-parameter "q" params))
+           (room-id (cgi-get-parameter "o" params)))
+       (if room-id
+           (parameterize
+            ((current-link room-id))
+            `(,(cgi-header :content-type "text/xml")
+              ,(srl:sxml->xml-noindent
+                (receive (exps file pos) (reader log-file last-pos)
+                  `(*TOP* (res (pos ,pos)
+                               (file ,file)
+                               (content ,@(filter exps))))))))
+
+           `(,(cgi-header :content-type "text/xml")
+              ,(srl:sxml->xml-noindent
+                (receive (exps file pos) (reader log-file last-pos)
+                  `(*TOP* (res (pos ,pos)
+                               (file ,file)
+                               (content ,@(filter exps))))))))))))
 
 (define (pull-filter x) x)

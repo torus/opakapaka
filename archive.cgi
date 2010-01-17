@@ -72,3 +72,5 @@
 (define (content x) (cons 'content (intersperse '(br) (string-split x #\newline))))
 (define (system x) #f)
 (define (new-file x) #f)
+(define (room x) #f)
+(define (|@| x) #f)

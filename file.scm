@@ -18,7 +18,7 @@
   (if (file-exists? (data-dir))
       (if (file-is-directory? (data-dir))
           (let1 path (build-path (data-dir)
-                                 (string-append "data."
+                                 (string-append (current-link) "."
                                                 (x->string (sys-time)) "."
                                                 (x->string (sys-getpid)) ".log"))
             (touch-file path)

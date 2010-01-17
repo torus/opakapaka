@@ -364,9 +364,11 @@
                        "get_log" ()
                        (js-let
                         ((client "new XMLHttpRequest()"))
-                       (js-statement client
-                                     ".open(\"GET\", \"./pull.cgi?p=\" + "
-                                     pos "+ (" file "? \"&q=\" + " file " : \"\"), true)")
+                        (js `(((,client .. open) ->
+                               "GET"
+                               ("./pull.cgi?p=" + ,pos
+                                + (() ,file ? "&q=" + ,file |:| "&o=" + ,(config-get 'id)))
+                               true) //))
                        (js-statement client ".send(null)")
                        (js-statement
                         "" client ".onreadystatechange = "
@@ -444,7 +446,7 @@
 
                  (js-let
                   ((doc "document.implementation.createDocument (\"\", \"\", null)")
-                   (elem `("(" ,chat_entry " (" ,from " (" ,user_by_nickname " (" ,string " (" ,name ")),"
+                   (elem `("(" ,chat_entry " ({room:\"" ,(config-get 'id) "\"}," ,from " (" ,user_by_nickname " (" ,string " (" ,name ")),"
                             ,avatar_elem "),"
                             ,content " (" ,string " (" ,text ")))) (" ,doc ")")))
 

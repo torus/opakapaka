@@ -1,6 +1,7 @@
 (define-module config-module
   (define (title t) (cons 'title t))
   (define (max-file-size t) (cons 'max-file-size t))
+  (define (id t) (cons 'id t))
   )
 
 (define-macro opakapaka-config

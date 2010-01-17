@@ -48,7 +48,7 @@
           `(from ,@children)
           `(from ,@children (avatar-image (string ,(identicon-url (cadr (assoc 'src-addr params))))))))))
 
-(define-null-tags chat-entry link file pos date posix-time
+(define-null-tags chat-entry link file pos date posix-time |@| room
   avatar-image user-by-nickname content string)
 
 ;; test
