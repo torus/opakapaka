@@ -18,15 +18,16 @@
   (write-tree
    `(,(cgi-header :content-type "text/javascript")
      ,(map (lambda (x) (list x "\n"))
-           `(,(js-statement
-               "D = "
-               (js-function
-                (output update-file)
-                (js-statement "this.state = {}")
-                (js-statement "this.outtext = " (js-function (t) (js-statement output " (document.createTextNode (" t "))")))
-                (js-statement "this.out = " output "")
-                (js-statement "this.update_logfile = " update-file "")
-                ))
+           `(,(js-let-syms (output update-file)
+                (js 
+                 `(D =
+                     (function
+                      (,output ,update-file)
+                      this .. state = (^^) //
+                      this .. outtext = (function (t) (,output -> (document.createTextNode -> t))) //
+                      this .. out = ,output //
+                      this .. update_logfile = ,update-file //
+                      ))))
 
              ,(define-tag ("system")
                 (js-statement (js-call (js-. 'this 'update_logfile)

@@ -11,7 +11,7 @@
 ;; (for (var i in obj) (func -> obj <> i) // (a ++) //)
 
 (define-module js
-  (export js))
+  (export js js-sym js-let-syms))
 (select-module js)
 
 (use util.match)
@@ -58,3 +58,11 @@
          ((terms ...)
           (apply string-append (map js terms)))
          ))
+
+(define (js-sym) (string->symbol (string-append "$" (symbol->string (gensym)))))
+
+(define-syntax js-let-syms
+  (syntax-rules ()
+    ((_ (vars ...) body ...)
+     (let ((vars (js-sym)) ...)
+       body ...))))
