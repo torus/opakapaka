@@ -10,6 +10,7 @@
 
 (test* "join" "a,b,c" ((with-module js join) '|,| '(a b c)))
 (test* "string" "\"hello\"" (js "hello"))
+(test* "regex" "/^#\\/(.*)\\//" (js '|/^#\\/(.*)\\//|))
 (test* "." "a.b" (js `(a .. b)))
 (test* "." "a.b.c" (js `(a .. b .. c)))
 (test* "var" "var x" (js '(var x)))
@@ -32,6 +33,7 @@
 (test* "funcall dotted" "func(a,b.c,d.e)" (js '(func -> a (b .. c) (d .. e))))
 (test* "funcall statement" "func(a,b,c);" (js '((func -> a b c) //)))
 (test* "if" "if(co){body();}" (js '(if (co) (body ->) //)))
+(test* "if-else" "if(co){body();}else{else_body();}" (js '((if (co) (body ->) //) (else (else_body ->) //))))
 (test* "for" "for(var i=0;i<5;i++){func(i);}" (js '(for (var i = 0 // i < 5 // i ++) (func -> i) //)))
 (test* "for-in" "for(var i in obj){func(i);}" (js '(for (var i in obj) (func -> i) //)))
 (test* "while" "while(x>10){func(x);}" (js '(while (x > 10) (func -> x) //)))

@@ -47,6 +47,8 @@
                                           ) pairs)) "}"))
          (`(if (,condition ...) ,body ...)
           #`"if,(js `((() ,condition) |{| ,body |}|))")
+         (`(else ,body ...)
+          #`"else,(js `(|{| ,body |}|))")
          (`(for (,stmt ...) ,body ...)
           #`"for,(js `((() ,stmt) |{| ,body |}|))")
          (`(while (,expr ...) ,body ...)
