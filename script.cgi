@@ -205,6 +205,7 @@
           (js-statement "return " (js-function () (js-statement "return " e)))
           )
 
+        ,(js `(var ROOM_ID = ,(config-get 'id) //))
         ,(js-defun
           "initialize" ()
           (js-let
@@ -216,14 +217,28 @@
             (tags "[\"h1\", \"h2\", \"ul\", \"li\", \"form\", \"input\", \"textarea\", \"div\", \"p\", \"br\", \"a\"]")
             (env "{}"))
 
-           (js `(window.onblur = (function
-                                  ()
-                                  ,unread-count = 0 //
-                                  ,active = false //
-                                  window.onfocus = (function
-                                                    ()
-                                                    ,d .. title = ,orig-title //
-                                                    ,active = true //) //) //))
+           (js `(window .. onblur = (function
+                                     ()
+                                     ,unread-count = 0 //
+                                     ,active = false //
+                                     window.onfocus = (function
+                                                       ()
+                                                       ,d .. title = ,orig-title //
+                                                       ,active = true //) //) //))
+           (js `((var loc = location .. href //)
+                 (((loc .. match) -> |/^(.*?)(#\\/?(.*))?$/|) //)
+                 (var path = RegExp .. $1 //)
+                 (var anchor = RegExp .. $3 //)
+                 (var room = anchor ? ((anchor .. split) -> "/") (<> 0) |:| false //)
+                 (if (room)
+                     ;(alert -> room) //
+                     ROOM_ID = room //
+                     )
+                 (else ;ROOM_ID = ,(config-get 'id) //
+                       ;(alert -> ("room ID -> " + ROOM_ID)) //
+                       location .. href = path + "#/" + ROOM_ID + "/" //
+                       )
+                 ))
 
            (js-for/iter
             (i -> tags)
@@ -362,7 +377,7 @@
                     (js `(((,client .. open) ->
                            "GET"
                            ("./pull.cgi?p=" + ,pos
-                            + (() ,file ? "&q=" + ,file |:| "&o=" + ,(config-get 'id)))
+                            + (() ,file ? "&q=" + ,file |:| "&o=" + ROOM_ID))
                            true) //))
                     (js-statement client ".send(null)")
                     (js-statement
@@ -441,7 +456,7 @@
 
             (js-let
              ((doc "document.implementation.createDocument (\"\", \"\", null)")
-              (elem `("(" ,chat_entry " ({room:\"" ,(config-get 'id) "\"}," ,from " (" ,user_by_nickname " (" ,string " (" ,name ")),"
+              (elem `("(" ,chat_entry " ({room:" ROOM_ID "}," ,from " (" ,user_by_nickname " (" ,string " (" ,name ")),"
                       ,avatar_elem "),"
                       ,content " (" ,string " (" ,text ")))) (" ,doc ")")))
 
