@@ -24,10 +24,11 @@
 
 (define (add-date doc)
   (match doc
-	 (`(chat-entry . ,content)
+	 (`(chat-entry (|@| ,attrs ...) . ,content)
 	  `(chat-entry
+            (|@| ,@attrs)
 	    (date (posix-time ,(sys-time)))
-	    . ,content))))
+	    ,@content))))
 
 (define (push-filter x)
   (let ((addr (or (cgi-get-metavariable "REMOTE_ADDR") "?")))
