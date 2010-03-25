@@ -61,7 +61,7 @@
           (js-statement i "<" lines_with_br ".length")
           (js-statement* i "++")
 
-          (let1 regexmatch ".match(/^(.*?)(http:\\/\\/[^\\s]*)(.*)$/)"
+          (let1 regexmatch ".match(/^(.*?)(https?:\\/\\/[^\\s]*)(.*)$/)"
             (js-let
              ((l `(,lines_with_br "[" ,i "]")))
              (js-if
